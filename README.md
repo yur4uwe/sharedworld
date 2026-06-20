@@ -18,8 +18,11 @@ The mod only has access to its own app data folder, not your entire drive.
 
 ## Usage
 
-Create or open your world, then use the SharedWorld screen in-game to turn it
-into a shared world.
+1. Create a single-player world. Enter for it to load and leave it.
+2. In 'Multiplayer' option in the main menu, click 'Shared Worlds' button in top right corner of the screen. Its a switch that switches 'SharedWorld' menu and server menu
+3. Click 'Create' button in the bottom menu.
+4. Go through the setup process.
+5. Enjoy the game
 
 When one player leaves, another player can take over hosting and keep the same
 world going. Friends connect through `e4mc`, so the active host can play from
