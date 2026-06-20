@@ -5,6 +5,7 @@ import link.sharedworld.SharedWorldCustomIconStore.SelectedIcon;
 import link.sharedworld.SharedWorldText;
 import link.sharedworld.api.SharedWorldApiClient;
 import link.sharedworld.api.SharedWorldModels.ImportedWorldSourceDto;
+import link.sharedworld.api.SharedWorldModels.ServerCapabilitiesDto;
 import link.sharedworld.api.SharedWorldModels.StorageLinkSessionDto;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -85,6 +86,8 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
     private boolean submitting;
     private String storageMessage = "";
     private int storageMessageColor = 0xFFB8C5D6;
+    /** Fetched once on screen open; null means still loading (assume google-drive). */
+    private volatile ServerCapabilitiesDto serverCapabilities;
     private String iconMessage = "";
     private long iconMessageExpiresAtMs;
     private boolean iconHovered;
@@ -174,6 +177,8 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         this.updateButtons();
         this.tabNavigationBar.selectTab(this.restoreState == null ? 0 : this.restoreState.tabIndex(), false);
         this.repositionElements();
+        // Fetch capabilities in the background; UI refreshes once the result arrives.
+        CompletableFuture.runAsync(this::fetchServerCapabilities, SharedWorldClient.ioExecutor());
     }
 
     @Override
@@ -382,21 +387,29 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         Tab currentTab = this.tabManager.getCurrentTab();
         boolean detailsAllowed = this.selectedSave != null;
         boolean storageAllowed = this.selectedSave != null && this.nameValid();
+        boolean useLocalDisk = this.isLocalDiskBackend();
 
         if (this.tabNavigationBar != null) {
             this.tabNavigationBar.setTabActiveState(0, true);
             this.tabNavigationBar.setTabActiveState(1, detailsAllowed);
-            this.tabNavigationBar.setTabActiveState(2, storageAllowed);
+            // Hide the storage tab entirely when the backend manages storage itself.
+            this.tabNavigationBar.setTabActiveState(2, !useLocalDisk && storageAllowed);
         }
 
         this.backButton.setMessage(currentTab == this.worldTab ? Component.translatable("screen.sharedworld.cancel") : Component.translatable("gui.back"));
         this.backButton.active = !this.submitting;
 
-        if (currentTab == this.storageTab) {
+        if (currentTab == this.storageTab && !useLocalDisk) {
             this.primaryButton.setMessage(Component.translatable(this.submitting
                     ? "screen.sharedworld.creating"
                     : "screen.sharedworld.create_world"));
             this.primaryButton.active = !this.submitting && this.selectedSave != null && this.nameValid() && this.storageLinked();
+        } else if (currentTab == this.detailsTab && useLocalDisk) {
+            // On local-disk backend the Details tab is the last step.
+            this.primaryButton.setMessage(Component.translatable(this.submitting
+                    ? "screen.sharedworld.creating"
+                    : "screen.sharedworld.create_world"));
+            this.primaryButton.active = !this.submitting && this.nameValid();
         } else {
             this.primaryButton.setMessage(Component.translatable("screen.sharedworld.next"));
             this.primaryButton.active = !this.submitting && ((currentTab == this.worldTab && this.selectedSave != null) || (currentTab == this.detailsTab && this.nameValid()));
@@ -434,7 +447,12 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         if (currentTab == this.worldTab && this.selectedSave != null) {
             this.tabNavigationBar.selectTab(1, true);
         } else if (currentTab == this.detailsTab && this.nameValid()) {
-            this.tabNavigationBar.selectTab(2, true);
+            if (this.isLocalDiskBackend()) {
+                // Skip straight to create — no Drive link required.
+                this.submitCreate();
+            } else {
+                this.tabNavigationBar.selectTab(2, true);
+            }
         } else if (currentTab == this.storageTab && this.storageLinked()) {
             this.submitCreate();
         }
@@ -582,6 +600,12 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
 
     private void refreshStorageState() {
         DriveLinkAttempt attempt = this.driveLinkController.currentAttempt();
+        if (this.restoreState != null && this.restoreState.message() != null && !this.restoreState.message().isBlank() && attempt == null && this.storageLink == null) {
+            this.storageMessage = this.restoreState.message();
+            this.storageMessageColor = this.restoreState.messageColor();
+            this.updateButtons();
+            return;
+        }
         this.storageMessage = "";
         this.storageMessageColor = 0xFFB8C5D6;
         if (attempt != null && attempt.phase() == DriveLinkUiPhase.OPENING_BROWSER) {
@@ -595,14 +619,14 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         } else if (this.storageLinked()) {
             this.storageMessage = "";
         } else if (this.storageLink != null
-                && !"cancelled".equalsIgnoreCase(this.storageLink.status())
-                && this.storageLink.errorMessage() != null
-                && !this.storageLink.errorMessage().isBlank()) {
-            this.storageMessage = this.storageLink.errorMessage();
-            this.storageMessageColor = 0xFFFF5555;
-        }
-        this.updateButtons();
-    }
+                 && !"cancelled".equalsIgnoreCase(this.storageLink.status())
+                 && this.storageLink.errorMessage() != null
+                 && !this.storageLink.errorMessage().isBlank()) {
+             this.storageMessage = this.storageLink.errorMessage();
+             this.storageMessageColor = 0xFFFF5555;
+         }
+         this.updateButtons();
+     }
 
     private void submitCreate() {
         LocalSaveCatalog.LocalSaveOption save = this.selectedSave;
@@ -647,10 +671,15 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
     }
 
     private CreateRequest buildRequest(LocalSaveCatalog.LocalSaveOption save) {
+        // For local-disk backends no storage link session is needed; pass null.
+        StorageLinkSessionDto link = this.isLocalDiskBackend() ? null : this.storageLink;
         try {
+            if (link == null && !this.isLocalDiskBackend()) {
+                throw new IOException(SharedWorldText.string("screen.sharedworld.storage_link_required"));
+            }
             return new CreateRequest(
                     save,
-                    this.requireLinkedSession(),
+                    link,
                     this.worldName(),
                     AbstractSharedWorldMetadataScreen.effectiveMotd(this.motdBox.getValue()),
                     this.selectedIcon,
@@ -673,7 +702,30 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
     }
 
     private boolean storageLinked() {
+        // On local-disk backends no storage account is needed.
+        if (this.isLocalDiskBackend()) {
+            return true;
+        }
         return this.storageLink != null && "linked".equalsIgnoreCase(this.storageLink.status());
+    }
+
+    /** Returns true once we know the backend uses local-disk storage. */
+    private boolean isLocalDiskBackend() {
+        ServerCapabilitiesDto caps = this.serverCapabilities;
+        return caps != null && caps.isLocalDisk();
+    }
+
+    /**
+     * Fetches /capabilities and refreshes the UI on the game thread.
+     * Safe to call from a background thread.
+     */
+    private void fetchServerCapabilities() {
+        ServerCapabilitiesDto caps = SharedWorldClient.apiClient().fetchCapabilities();
+        Minecraft.getInstance().execute(() -> {
+            this.serverCapabilities = caps;
+            this.updateButtons();
+            this.refreshStorageState();
+        });
     }
 
     private boolean nameValid() {

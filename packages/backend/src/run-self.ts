@@ -7,6 +7,7 @@ import type {
   SqlPreparedStatement,
   SqlResultRow
 } from "./env.ts";
+import { StorageProviderType } from "@shared/contracts.ts";
 
 const PORT = parseInt(process.env.PORT || "8787", 10);
 const DATA_DIR = process.env.DATA_DIR || "./data";
@@ -85,17 +86,93 @@ class SqliteDatabase implements SqlDatabase {
   }
 }
 
+function loadWranglerTomlVars(tomlPath: string): Record<string, string> {
+  const vars: Record<string, string> = {};
+  if (!existsSync(tomlPath)) {
+    return vars;
+  }
+  const content = readFileSync(tomlPath, "utf8");
+  const lines = content.split(/\r?\n/);
+  let inVarsSection = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("#") || trimmed === "") {
+      continue;
+    }
+    if (trimmed.startsWith("[")) {
+      inVarsSection = trimmed === "[vars]";
+      continue;
+    }
+    if (inVarsSection) {
+      const match = trimmed.match(/^([A-Za-z0-9_-]+)\s*=\s*(.+)$/);
+      if (match) {
+        const key = match[1];
+        let val = match[2].trim();
+        if (val.startsWith('"') && val.endsWith('"')) {
+          val = val.slice(1, -1);
+        } else if (val.startsWith("'") && val.endsWith("'")) {
+          val = val.slice(1, -1);
+        }
+        vars[key] = val;
+      }
+    }
+  }
+  return vars;
+}
+
+function loadDotEnvStyle(filePath: string): Record<string, string> {
+  const vars: Record<string, string> = {};
+  if (!existsSync(filePath)) {
+    return vars;
+  }
+  const content = readFileSync(filePath, "utf8");
+  const lines = content.split(/\r?\n/);
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("#") || trimmed === "") {
+      continue;
+    }
+    const match = trimmed.match(/^([A-Za-z0-9_-]+)\s*=\s*(.+)$/);
+    if (match) {
+      const key = match[1];
+      let val = match[2].trim();
+      if (val.startsWith('"') && val.endsWith('"')) {
+        val = val.slice(1, -1);
+      } else if (val.startsWith("'") && val.endsWith("'")) {
+        val = val.slice(1, -1);
+      }
+      vars[key] = val;
+    }
+  }
+  return vars;
+}
+
 // 4. Bootstrap & Start Server
+const wranglerTomlPath = join(import.meta.dir, "../wrangler.toml");
+const devVarsPath = join(import.meta.dir, "../.dev.vars");
+const envPath = join(import.meta.dir, "../.env");
+
+const tomlVars = loadWranglerTomlVars(wranglerTomlPath);
+const devVars = loadDotEnvStyle(devVarsPath);
+const envVars = loadDotEnvStyle(envPath);
+
+const mergedEnv = {
+  ...tomlVars,
+  ...devVars,
+  ...envVars,
+  ...process.env
+};
+
 const env: Env = {
   DB: new SqliteDatabase(db),
-  ACTIVE_STORAGE_PROVIDER: "local-disk",
-  PUBLIC_BASE_URL: process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`,
-  SESSION_TTL_HOURS: process.env.SESSION_TTL_HOURS,
-  SIGNED_URL_TTL_SECONDS: process.env.SIGNED_URL_TTL_SECONDS,
-  MOJANG_HAS_JOINED_ENDPOINT: process.env.MOJANG_HAS_JOINED_ENDPOINT,
-  ALLOW_DEV_AUTH: process.env.ALLOW_DEV_AUTH,
-  ALLOW_DEV_INSECURE_E4MC: process.env.ALLOW_DEV_INSECURE_E4MC,
-  DEV_AUTH_SECRET: process.env.DEV_AUTH_SECRET,
+  ACTIVE_STORAGE_PROVIDER: mergedEnv.ACTIVE_STORAGE_PROVIDER as StorageProviderType || "local-disk",
+  PUBLIC_BASE_URL: mergedEnv.PUBLIC_BASE_URL || `http://localhost:${PORT}`,
+  SESSION_TTL_HOURS: mergedEnv.SESSION_TTL_HOURS,
+  SIGNED_URL_TTL_SECONDS: mergedEnv.SIGNED_URL_TTL_SECONDS,
+  MOJANG_HAS_JOINED_ENDPOINT: mergedEnv.MOJANG_HAS_JOINED_ENDPOINT,
+  ALLOW_DEV_AUTH: mergedEnv.ALLOW_DEV_AUTH,
+  ALLOW_DEV_INSECURE_E4MC: mergedEnv.ALLOW_DEV_INSECURE_E4MC,
+  DEV_AUTH_SECRET: mergedEnv.DEV_AUTH_SECRET,
 };
 
 const app = createApp(env);

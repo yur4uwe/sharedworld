@@ -24,7 +24,7 @@ export function createApp(env: Env): { fetch(request: Request): Promise<Response
   );
 
   return {
-    fetch: createRouter(service)
+    fetch: createRouter(service, env)
   };
 }
 

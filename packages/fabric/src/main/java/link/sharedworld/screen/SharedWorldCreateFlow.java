@@ -74,7 +74,7 @@ final class SharedWorldCreateFlow {
                 request.motd(),
                 customIconBase64,
                 request.importSource(),
-                request.storageLink().id()
+                request.storageLink() != null ? request.storageLink().id() : null
         );
         WorldDetailsDto createdWorld = result.world();
         InitialUploadLease uploadLease = requireInitialUploadLease(createdWorld.id(), createdWorld.name(), result.initialUploadAssignment());

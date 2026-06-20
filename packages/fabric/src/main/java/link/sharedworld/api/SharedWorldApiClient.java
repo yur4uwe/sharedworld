@@ -103,6 +103,33 @@ public final class SharedWorldApiClient {
         this.gson = new Gson();
     }
 
+    /**
+     * Fetches server capabilities without authentication.
+     * Falls back to a google-drive default if the endpoint does not exist
+     * (older backend versions) or returns an error.
+     */
+    public SharedWorldModels.ServerCapabilitiesDto fetchCapabilities() {
+        try {
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(this.baseUrl + "/capabilities"))
+                    .timeout(Duration.ofSeconds(10))
+                    .header("accept", "application/json")
+                    .GET()
+                    .build();
+            HttpResponse<String> response = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 400) {
+                SharedWorldModels.ServerCapabilitiesDto dto =
+                        gson.fromJson(response.body(), SharedWorldModels.ServerCapabilitiesDto.class);
+                if (dto != null) {
+                    return dto;
+                }
+            }
+        } catch (Exception ignored) {
+            // Network errors or parse failures: treat as unknown/google-drive backend.
+        }
+        return new SharedWorldModels.ServerCapabilitiesDto("google-drive");
+    }
+
     public List<WorldSummaryDto> listWorlds() throws IOException, InterruptedException {
         ensureSession();
         return Arrays.asList(request("GET", "/worlds", null, WorldSummaryDto[].class, true));

@@ -6,6 +6,17 @@ public final class SharedWorldModels {
     private SharedWorldModels() {
     }
 
+    /**
+     * Returned by GET /capabilities (unauthenticated).
+     * storageProvider is "google-drive", "r2", or "local-disk".
+     * A null value means the field was absent — treat like "google-drive".
+     */
+    public record ServerCapabilitiesDto(String storageProvider) {
+        public boolean isLocalDisk() {
+            return "local-disk".equals(storageProvider);
+        }
+    }
+
     public record AuthChallengeDto(String serverId, String expiresAt) {
     }
 

@@ -227,7 +227,10 @@ export async function uploadStorageBlob(
     ["host-starting", "host-live", "host-finalizing"]
   );
   const contentType = request.headers.get("content-type") ?? "application/octet-stream";
+  const contentLength = request.headers.get("content-length") ?? "unknown";
+  console.log(`[Storage] Uploading blob: ${storageKey} (${contentType}, size: ${contentLength} bytes)`);
   await svc.storageProvider.put(await requireWorldStorageBinding(svc, worldId), storageKey, request.body ?? "", contentType);
+  console.log(`[Storage] Successfully uploaded blob: ${storageKey}`);
 }
 
 export async function downloadStorageBlob(

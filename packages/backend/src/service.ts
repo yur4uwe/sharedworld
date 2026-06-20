@@ -328,9 +328,13 @@ export class WorkerSignedUrlSigner implements BlobUrlSigner {
     expiresAt: string;
   } {
     const configuredBase = this.env.PUBLIC_BASE_URL;
-    const base = configuredBase && !configuredBase.includes("sharedworld.example.workers.dev")
-      ? configuredBase
-      : (requestOrigin ?? configuredBase ?? "https://sharedworld.example.workers.dev");
+    const isLocalhostOrDefault = !configuredBase ||
+      configuredBase.includes("sharedworld.example.workers.dev") ||
+      configuredBase.includes("localhost") ||
+      configuredBase.includes("127.0.0.1");
+    const base = isLocalhostOrDefault
+      ? (requestOrigin ?? configuredBase ?? "https://sharedworld.example.workers.dev")
+      : configuredBase;
     const ttlSeconds = Number(this.env.SIGNED_URL_TTL_SECONDS ?? "900");
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
     return {
