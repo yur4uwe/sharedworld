@@ -5,7 +5,10 @@
     "paths": {
       "@shared/*": ["../shared/src/*"],
       "@src/*": ["src/*"]
-    }
+    },
+    "types": [
+      "bun-types"
+    ]
   },
   "include": [
     "src/**/*.ts",

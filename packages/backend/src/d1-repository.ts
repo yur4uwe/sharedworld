@@ -21,7 +21,7 @@ import {
   PLAYER_PRESENCE_TIMEOUT_MS
 } from "@shared/index.ts";
 
-import type { D1Database } from "./env.ts";
+import type { SqlDatabase } from "./env.ts";
 import type {
   AuthChallengeRecord,
   DeleteWorldResult,
@@ -60,7 +60,7 @@ import {
 } from "./repository/d1-support.ts";
 
 export class D1SharedWorldRepository implements SharedWorldRepository {
-  constructor(private readonly db: D1Database) { }
+  constructor(private readonly db: SqlDatabase) { }
 
   async createChallenge(challenge: AuthChallengeRecord): Promise<void> {
     await this.run(

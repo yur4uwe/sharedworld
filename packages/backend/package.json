@@ -6,7 +6,8 @@
     "test": "bun test",
     "typecheck": "tsc -p tsconfig.json",
     "dev": "XDG_CONFIG_HOME=/tmp/sharedworld-xdg npx wrangler dev --ip 127.0.0.1 --port 8787",
-    "deploy": "XDG_CONFIG_HOME=/tmp/sharedworld-xdg npx wrangler deploy"
+    "deploy": "XDG_CONFIG_HOME=/tmp/sharedworld-xdg npx wrangler deploy",
+    "self-host": "bun run src/run-self.ts"
   },
   "dependencies": {
     "@sharedworld/shared": "workspace:*"
