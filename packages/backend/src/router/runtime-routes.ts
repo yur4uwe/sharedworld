@@ -10,9 +10,9 @@ import type {
   PresenceHeartbeatRequest,
   RefreshWaitingRequest,
   ReleaseHostRequest
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { json, readJson } from "../http.ts";
+import { json, readJson } from "@src/http.ts";
 import type { RouterService } from "./shared.ts";
 import { requireParam, RouteDefinition, UrlPattern } from "./shared.ts";
 

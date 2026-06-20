@@ -5,7 +5,7 @@ import {
   type UncleanShutdownWarning,
   type WorldRuntimePhase,
   type WorldRuntimeStatus
-} from "../../shared/src/index.ts";
+} from "@shared/index.ts";
 
 export interface RuntimeCandidate {
   playerUuid: string;
@@ -327,12 +327,12 @@ export function toRuntimeStatus(
   const publicWarning = warning == null
     ? null
     : {
-        hostUuid: warning.hostUuid,
-        hostPlayerName: warning.hostPlayerName,
-        phase: warning.phase,
-        runtimeEpoch: warning.runtimeEpoch,
-        recordedAt: warning.recordedAt
-      };
+      hostUuid: warning.hostUuid,
+      hostPlayerName: warning.hostPlayerName,
+      phase: warning.phase,
+      runtimeEpoch: warning.runtimeEpoch,
+      recordedAt: warning.recordedAt
+    };
   if (!runtime) {
     return {
       worldId,
@@ -400,8 +400,8 @@ function phaseDeadline(runtime: WorldRuntimeRecord): Date | null {
   const rawDeadline = runtime.phase === "host-starting"
     ? runtime.startupDeadlineAt
     : runtime.phase === "host-live"
-    ? runtime.expiresAt
-    : null;
+      ? runtime.expiresAt
+      : null;
   if (!rawDeadline) {
     return null;
   }

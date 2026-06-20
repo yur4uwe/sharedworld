@@ -4,13 +4,13 @@ import type {
   DevAuthCompleteRequest,
   DevSessionToken,
   SessionToken
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import { randomId, randomServerId } from "../ids.ts";
-import type { Env } from "../env.ts";
-import type { SharedWorldRepository } from "../repository.ts";
-import type { AuthVerifier } from "./../service/context.ts";
+import { HttpError } from "@src/http.ts";
+import { randomId, randomServerId } from "@src/ids.ts";
+import type { Env } from "@src/env.ts";
+import type { SharedWorldRepository } from "@src/repository.ts";
+import type { AuthVerifier } from "@src/service/context.ts";
 
 const JOIN_VERIFICATION_DELAYS_MS = [0, 150, 300, 600, 1200] as const;
 
@@ -19,7 +19,7 @@ export class AuthDomainService {
     private readonly repository: SharedWorldRepository,
     private readonly authVerifier: AuthVerifier,
     private readonly env: Env
-  ) {}
+  ) { }
 
   async createChallenge(now = new Date()): Promise<AuthChallenge> {
     const challenge = {

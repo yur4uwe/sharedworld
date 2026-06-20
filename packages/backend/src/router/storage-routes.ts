@@ -1,6 +1,6 @@
-import type { CreateStorageLinkRequest } from "../../../shared/src/index.ts";
+import type { CreateStorageLinkRequest } from "@shared/index.ts";
 
-import { HttpError, json, readJson } from "../http.ts";
+import { HttpError, json, readJson } from "@src/http.ts";
 import type { RouterService } from "./shared.ts";
 import { renderStorageLinkPage, requireParam, RouteDefinition, UrlPattern } from "./shared.ts";
 

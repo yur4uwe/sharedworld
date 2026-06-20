@@ -20,11 +20,11 @@ import {
   type SyncPolicy,
   type UploadPlan,
   type UploadPlanRequest
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import type { RequestContext, WorldStorageBinding } from "../repository.ts";
-import type { WorldRuntimeRecord } from "../runtime-protocol.ts";
+import { HttpError } from "@src/http.ts";
+import type { RequestContext, WorldStorageBinding } from "@src/repository.ts";
+import type { WorldRuntimeRecord } from "@src/runtime-protocol.ts";
 import {
   HOST_TOKEN_HEADER,
   RUNTIME_EPOCH_HEADER,

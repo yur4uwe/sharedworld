@@ -16,7 +16,7 @@ import type {
   WorldMembership,
   WorldSnapshotSummary,
   WorldSummary
-} from "../../shared/src/index.ts";
+} from "@shared/index.ts";
 import type { RuntimeWaiter, WorldRuntimeRecord } from "./runtime-protocol.ts";
 
 export interface AuthChallengeRecord {
@@ -189,4 +189,4 @@ export interface SharedWorldRepository extends
   StorageRepository,
   MembershipRepository,
   RuntimeRepository,
-  SnapshotRepository {}
+  SnapshotRepository { }

@@ -1,4 +1,4 @@
-import type { StorageProviderType } from "../../shared/src/index.ts";
+import type { StorageProviderType } from "@shared/index.ts";
 
 import { HttpError } from "./http.ts";
 import type { Env, R2ObjectBody } from "./env.ts";
@@ -33,7 +33,7 @@ export interface StorageProvider {
 export class R2StorageProvider implements StorageProvider {
   readonly provider = "r2" as const;
 
-  constructor(private readonly env: Env) {}
+  constructor(private readonly env: Env) { }
 
   async exists(_binding: StorageBinding, storageKey: string): Promise<boolean> {
     return (await this.env.BLOBS?.head(storageKey)) != null;
@@ -73,7 +73,7 @@ export class GoogleDriveStorageProvider implements StorageProvider {
   constructor(
     private readonly env: Env,
     private readonly repository: SharedWorldRepository
-  ) {}
+  ) { }
 
   async exists(binding: StorageBinding, storageKey: string): Promise<boolean> {
     const accountId = requireAccountId(binding);
@@ -408,7 +408,7 @@ function sleep(delayMs: number): Promise<void> {
 class AccountRequestLimiter {
   private nextAllowedAt = 0;
 
-  constructor(private readonly maxStartsPerSecond: number) {}
+  constructor(private readonly maxStartsPerSecond: number) { }
 
   async scheduleUploadStart(): Promise<void> {
     const intervalMs = Math.max(1, Math.ceil(1000 / this.maxStartsPerSecond));

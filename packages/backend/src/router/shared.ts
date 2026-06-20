@@ -1,8 +1,8 @@
-import type { UploadPlanRequest } from "../../../shared/src/index.ts";
+import type { UploadPlanRequest } from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import type { RequestContext } from "../repository.ts";
-import type { SharedWorldService } from "../service.ts";
+import { HttpError } from "@src/http.ts";
+import type { RequestContext } from "@src/repository.ts";
+import type { SharedWorldService } from "@src/service.ts";
 
 export type RouterService = Pick<
   SharedWorldService,

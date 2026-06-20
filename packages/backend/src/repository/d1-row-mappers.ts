@@ -2,16 +2,15 @@ import type {
   InviteCode,
   StartupProgressMode,
   StorageProviderType,
-  UncleanShutdownWarning,
-  WorldRuntimePhase
-} from "../../../shared/src/index.ts";
+  UncleanShutdownWarning
+} from "@shared/index.ts";
 
 import type {
   StorageAccountRecord,
   StorageLinkSessionRecord,
   StorageObjectRecord
-} from "../repository.ts";
-import type { WorldRuntimeRecord } from "../runtime-protocol.ts";
+} from "@src/repository.ts";
+import type { WorldRuntimeRecord } from "@src/runtime-protocol.ts";
 import { asNullableString, clampFraction, type Row } from "./d1-support.ts";
 
 export function mapInvite(row: Row): InviteCode {
@@ -68,11 +67,11 @@ export function mapRuntimeRow(row: Row): WorldRuntimeRecord {
       && asNullableString(row.startup_progress_mode) != null
       && asNullableString(row.startup_progress_updated_at) != null
       ? {
-          label: String(row.startup_progress_label),
-          mode: String(row.startup_progress_mode) as StartupProgressMode,
-          fraction: row.startup_progress_fraction == null ? null : clampFraction(Number(row.startup_progress_fraction)),
-          updatedAt: String(row.startup_progress_updated_at)
-        }
+        label: String(row.startup_progress_label),
+        mode: String(row.startup_progress_mode) as StartupProgressMode,
+        fraction: row.startup_progress_fraction == null ? null : clampFraction(Number(row.startup_progress_fraction)),
+        updatedAt: String(row.startup_progress_updated_at)
+      }
       : null
   };
 }

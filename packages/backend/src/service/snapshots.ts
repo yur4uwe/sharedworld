@@ -12,11 +12,11 @@ import {
   type SnapshotManifest,
   type SnapshotPack,
   type WorldSnapshotSummary
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import type { RequestContext, WorldStorageBinding } from "../repository.ts";
-import type { StorageBinding } from "../storage.ts";
+import { HttpError } from "@src/http.ts";
+import type { RequestContext, WorldStorageBinding } from "@src/repository.ts";
+import type { StorageBinding } from "@src/storage.ts";
 import type { ServiceContext } from "./context.ts";
 import {
   requireAuthorizedRuntime,

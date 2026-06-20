@@ -1,6 +1,6 @@
-import type { FinalizeSnapshotRequest, UploadPlanRequest } from "../../../shared/src/index.ts";
+import type { FinalizeSnapshotRequest, UploadPlanRequest } from "@shared/index.ts";
 
-import { json, ok, readJson } from "../http.ts";
+import { json, ok, readJson } from "@src/http.ts";
 import type { RouterService } from "./shared.ts";
 import { decodeStorageKey, parseDownloadPlanRequest, requireParam, RouteDefinition, UrlPattern } from "./shared.ts";
 

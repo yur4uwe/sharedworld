@@ -1,6 +1,6 @@
-import type { CreateWorldRequest, RedeemInviteRequest, UpdateWorldRequest } from "../../../shared/src/index.ts";
+import type { CreateWorldRequest, RedeemInviteRequest, UpdateWorldRequest } from "@shared/index.ts";
 
-import { json, ok, readJson } from "../http.ts";
+import { json, ok, readJson } from "@src/http.ts";
 import type { RouterService } from "./shared.ts";
 import { requireParam, RouteDefinition, UrlPattern } from "./shared.ts";
 

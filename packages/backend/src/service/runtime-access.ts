@@ -1,15 +1,15 @@
-import type { WorldDetails } from "../../../shared/src/index.ts";
+import type { WorldDetails } from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import type { RequestContext, WorldStorageBinding } from "../repository.ts";
+import { HttpError } from "@src/http.ts";
+import type { RequestContext, WorldStorageBinding } from "@src/repository.ts";
 import {
   choosePreferredCandidate,
   matchesHostAuthorization,
   resolveRuntimeTimeout,
   timedOutUncleanShutdownWarning,
   type WorldRuntimeRecord
-} from "../runtime-protocol.ts";
-import type { AuthorizedRuntime, ResolvedRuntimeState } from "../runtime-service-support.ts";
+} from "@src/runtime-protocol.ts";
+import type { AuthorizedRuntime, ResolvedRuntimeState } from "@src/runtime-service-support.ts";
 import type { ServiceContext } from "./context.ts";
 
 /**

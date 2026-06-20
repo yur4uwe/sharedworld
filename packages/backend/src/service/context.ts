@@ -1,8 +1,8 @@
-import type { Env } from "../env.ts";
-import type { SharedWorldRepository } from "../repository.ts";
-import type { WorldRuntimeRecord } from "../runtime-protocol.ts";
-import type { StorageProvider } from "../storage.ts";
-import type { StorageLinkDomainService } from "../storage/link-service.ts";
+import type { Env } from "@src/env.ts";
+import type { SharedWorldRepository } from "@src/repository.ts";
+import type { WorldRuntimeRecord } from "@src/runtime-protocol.ts";
+import type { StorageProvider } from "@src/storage.ts";
+import type { StorageLinkDomainService } from "@src/storage/link-service.ts";
 
 export interface AuthVerifier {
   verifyJoin(playerName: string, serverId: string): Promise<{ playerUuid: string; playerName: string } | null>;

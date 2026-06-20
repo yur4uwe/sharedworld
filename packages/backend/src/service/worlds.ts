@@ -5,13 +5,13 @@ import type {
   UpdateWorldRequest,
   WorldDetails,
   WorldSummary
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import { randomId, slugify } from "../ids.ts";
-import type { RequestContext, WorldUpdateRecord } from "../repository.ts";
-import { assignHostStarting } from "../runtime-protocol.ts";
-import type { StorageBinding } from "../storage.ts";
+import { HttpError } from "@src/http.ts";
+import { randomId, slugify } from "@src/ids.ts";
+import type { RequestContext, WorldUpdateRecord } from "@src/repository.ts";
+import { assignHostStarting } from "@src/runtime-protocol.ts";
+import type { StorageBinding } from "@src/storage.ts";
 import { signDownloadForWorld, type ServiceContext } from "./context.ts";
 import {
   requireMembership,

@@ -1,6 +1,9 @@
-import type { AuthCompleteRequest, DevAuthCompleteRequest } from "../../../shared/src/index.ts";
+import type {
+  AuthCompleteRequest,
+  DevAuthCompleteRequest
+} from "@shared/index.ts"
 
-import { json, readJson } from "../http.ts";
+import { json, readJson } from "@src/http.ts";
 import type { RouterService } from "./shared.ts";
 import { RouteDefinition, UrlPattern } from "./shared.ts";
 

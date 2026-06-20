@@ -1,4 +1,4 @@
-import type { ApiErrorShape } from "../../shared/src/index.ts";
+import type { ApiErrorShape } from "@shared/index.ts";
 
 export class HttpError extends Error {
   status: number;

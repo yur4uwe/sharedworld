@@ -33,7 +33,7 @@ import type {
   WorldRuntimeStatus,
   WorldSnapshotSummary,
   WorldSummary
-} from "../../shared/src/index.ts";
+} from "@shared/index.ts";
 
 import { AuthDomainService } from "./auth/service.ts";
 import type { Env } from "./env.ts";
@@ -259,7 +259,7 @@ export class SharedWorldService {
 }
 
 export class MinecraftSessionServerAuthVerifier implements AuthVerifier {
-  constructor(private readonly endpoint: string) {}
+  constructor(private readonly endpoint: string) { }
 
   async verifyJoin(playerName: string, serverId: string): Promise<{ playerUuid: string; playerName: string } | null> {
     const url = new URL(this.endpoint);
@@ -311,7 +311,7 @@ export class MinecraftSessionServerAuthVerifier implements AuthVerifier {
  * advisory for clients.
  */
 export class WorkerSignedUrlSigner implements BlobUrlSigner {
-  constructor(private readonly env: Env) {}
+  constructor(private readonly env: Env) { }
 
   async signUpload(worldId: string, storageKey: string, requestOrigin?: string) {
     return this.sign("PUT" as const, worldId, storageKey, requestOrigin);

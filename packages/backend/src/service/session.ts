@@ -15,11 +15,11 @@ import {
   type RefreshWaitingRequest,
   type ReleaseHostRequest,
   type WorldRuntimeStatus
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import { randomId } from "../ids.ts";
-import type { RequestContext } from "../repository.ts";
+import { HttpError } from "@src/http.ts";
+import { randomId } from "@src/ids.ts";
+import type { RequestContext } from "@src/repository.ts";
 import {
   assignHostStarting,
   matchesHostAuthorization,
@@ -30,14 +30,14 @@ import {
   toRuntimeStatus,
   type RuntimeCandidate,
   type WorldRuntimeRecord
-} from "../runtime-protocol.ts";
+} from "@src/runtime-protocol.ts";
 import {
   hostAssignmentForCurrentRuntime,
   runtimeAllowsDirectConnect,
   runtimeRequiresWaiting,
   type AuthorizedRuntime,
   type ResolvedRuntimeState
-} from "../runtime-service-support.ts";
+} from "@src/runtime-service-support.ts";
 import type { ServiceContext } from "./context.ts";
 import {
   hostNotActiveError,
@@ -361,11 +361,11 @@ export async function setHostStartupProgress(
   );
   const progress = request.label != null && request.mode != null
     ? {
-        label: request.label,
-        mode: request.mode,
-        fraction: clampFraction(request.fraction ?? null),
-        updatedAt: now.toISOString()
-      }
+      label: request.label,
+      mode: request.mode,
+      fraction: clampFraction(request.fraction ?? null),
+      updatedAt: now.toISOString()
+    }
     : null;
   const updated = setHostProgress(authorized.runtime, progress, now);
   await svc.repository.upsertRuntimeRecord(updated);
@@ -516,8 +516,8 @@ function runtimeToFinalizationResult(
     status: runtime != null
       ? runtimePhaseToWorldStatus(runtime.phase)
       : candidate != null
-      ? "handoff"
-      : "idle"
+        ? "handoff"
+        : "idle"
   };
 }
 

@@ -12,9 +12,14 @@ import type {
   WorldDetails,
   WorldMembership,
   WorldSnapshotSummary,
-  WorldSummary
-} from "../../shared/src/index.ts";
-import { HANDOFF_WAITER_TIMEOUT_MS, PLAYER_PRESENCE_TIMEOUT_MS, type SessionToken } from "../../shared/src/index.ts";
+  SessionToken,
+  WorldSummary,
+} from "@shared/index.ts";
+
+import {
+  HANDOFF_WAITER_TIMEOUT_MS,
+  PLAYER_PRESENCE_TIMEOUT_MS
+} from "@shared/index.ts";
 
 import type { D1Database } from "./env.ts";
 import type {

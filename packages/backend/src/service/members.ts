@@ -5,11 +5,11 @@ import {
   type RedeemInviteRequest,
   type ResetInviteResponse,
   type WorldDetails
-} from "../../../shared/src/index.ts";
+} from "@shared/index.ts";
 
-import { HttpError } from "../http.ts";
-import { inviteCode as generateInviteCode, randomId } from "../ids.ts";
-import type { RequestContext } from "../repository.ts";
+import { HttpError } from "@src/http.ts";
+import { inviteCode as generateInviteCode, randomId } from "@src/ids.ts";
+import type { RequestContext } from "@src/repository.ts";
 import type { ServiceContext } from "./context.ts";
 import { requireOwner, requireWorldDetails } from "./runtime-access.ts";
 import { getWorld } from "./worlds.ts";
