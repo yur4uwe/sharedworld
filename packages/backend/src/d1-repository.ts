@@ -1,12 +1,7 @@
 import type {
-  AbandonFinalizationRequest,
-  BeginFinalizationRequest,
   CancelWaitingRequest,
-  CompleteFinalizationRequest,
   FileTransferMode,
-  FinalizationActionResult,
   FinalizeSnapshotRequest,
-  HostStartupProgressRequest,
   InviteCode,
   KickMemberResponse,
   PresenceHeartbeatRequest,
@@ -53,7 +48,6 @@ import {
 } from "./repository/d1-row-mappers.ts";
 import {
   asNullableString,
-  clampFraction,
   joinMotdLines,
   normalizeBoundValues,
   sqlPlaceholders,
@@ -61,7 +55,7 @@ import {
 } from "./repository/d1-support.ts";
 
 export class D1SharedWorldRepository implements SharedWorldRepository {
-  constructor(private readonly db: D1Database) {}
+  constructor(private readonly db: D1Database) { }
 
   async createChallenge(challenge: AuthChallengeRecord): Promise<void> {
     await this.run(
