@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftDisconnectMixin {
     private static final Logger LOGGER = LoggerFactory.getLogger("sharedworld-disconnect");
 
-    @Inject(method = "disconnectFromWorld", at = @At("HEAD"))
-    private void sharedworld$markUserInitiatedDisconnect(Component message, CallbackInfo callbackInfo) {
+    @Inject(method = {"disconnectFromWorld", "disconnect"}, at = @At("HEAD"))
+    private void sharedworld$markUserInitiatedDisconnect(CallbackInfo callbackInfo) {
         Minecraft minecraft = (Minecraft) (Object) this;
         SharedWorldPlaySessionTracker.ActiveWorldSession session = SharedWorldClient.playSessionTracker().currentSession();
         SharedWorldDisconnectFlow.DisconnectAction action = SharedWorldDisconnectFlow.decide(

@@ -32,16 +32,29 @@ def mcBuckets = [
                 minecraftVersion: "1.21.11",
                 fabricApiVersion: "0.141.3+1.21.11",
                 minecraftRange  : ">=1.21.11 <1.22",
+                javaVersion     : 21,
+                loaderVersion   : project.loader_version
         ],
         "1.21.9" : [
                 minecraftVersion: "1.21.9",
                 fabricApiVersion: "0.134.1+1.21.9",
                 minecraftRange  : ">=1.21.9 <1.21.11",
+                javaVersion     : 21,
+                loaderVersion   : project.loader_version
         ],
         "1.21.6" : [
                 minecraftVersion: "1.21.6",
                 fabricApiVersion: "0.128.2+1.21.6",
                 minecraftRange  : ">=1.21.6 <1.21.9",
+                javaVersion     : 21,
+                loaderVersion   : project.loader_version
+        ],
+        "1.20.1" : [
+                minecraftVersion: "1.20.1",
+                fabricApiVersion: "0.92.9+1.20.1",
+                minecraftRange  : ">=1.20.1 <1.21",
+                javaVersion     : 17,
+                loaderVersion   : "0.15.6"
         ],
 ]
 def mcBucketName = providers.gradleProperty("sharedworldMcBucket").getOrElse("1.21.11")
@@ -185,7 +198,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${mcBucket.minecraftVersion}"
     mappings loom.officialMojangMappings()
 
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:${mcBucket.loaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${mcBucket.fabricApiVersion}"
     // Minecraft 1.21.11+ exposes jspecify on the mod compile classpath; older versions do
     // not, so SharedWorld brings its own copy for the @Nullable annotations it uses.
@@ -288,9 +301,14 @@ tasks.named("generateRemapClasspath").configure {
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraftRange", mcBucket.minecraftRange
+    inputs.property "javaVersion", mcBucket.javaVersion
+    inputs.property "loaderVersion", mcBucket.loaderVersion
 
     filesMatching("fabric.mod.json") {
-        expand "version": inputs.properties.version, "minecraftRange": inputs.properties.minecraftRange
+        expand "version": inputs.properties.version,
+               "minecraftRange": inputs.properties.minecraftRange,
+               "javaVersion": inputs.properties.javaVersion,
+               "loaderVersion": inputs.properties.loaderVersion
     }
 }
 
@@ -307,7 +325,7 @@ tasks.named("processDevHelperResources").configure {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = mcBucket.javaVersion
 }
 
 tasks.named("test").configure {
@@ -334,8 +352,8 @@ tasks.register("integrationTest", Test) {
 
 java {
     withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.toVersion(mcBucket.javaVersion)
+    targetCompatibility = JavaVersion.toVersion(mcBucket.javaVersion)
 }
 
 publishing {

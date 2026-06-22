@@ -19,9 +19,9 @@
     "sharedworld-versioned.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.18.2",
+    "fabricloader": ">=${loaderVersion}",
     "minecraft": "${minecraftRange}",
-    "java": ">=21",
+    "java": ">=${javaVersion}",
     "fabric-api": "*",
     "e4mc": ">=6.0.6 <7.0.0"
   }

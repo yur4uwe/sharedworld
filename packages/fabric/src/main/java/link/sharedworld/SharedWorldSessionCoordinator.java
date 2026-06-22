@@ -14,8 +14,11 @@ import link.sharedworld.host.SharedWorldHostingManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SharedWorldSessionCoordinator {
+    private static final Logger LOGGER = LoggerFactory.getLogger("sharedworld-session");
     private static final long POLL_INTERVAL_MS = 1_000L;
 
     private final SessionBackend backend;
@@ -166,6 +169,7 @@ public final class SharedWorldSessionCoordinator {
                 resumedRecoveryFingerprint,
                 startupMode == null ? SharedWorldHostingManager.StartupMode.NORMAL : startupMode
         );
+        LOGGER.info("Beginning join attempt for world: {} (startupMode={})", worldId, attempt.startupMode());
         this.pendingJoinAttempt = attempt;
         this.asyncBridge.supply(
                 () -> this.backend.enterSession(worldId, null, acknowledgeUncleanShutdown),
@@ -173,6 +177,7 @@ public final class SharedWorldSessionCoordinator {
                     if (!matchesPendingJoinAttempt(attempt)) {
                         return;
                     }
+                    LOGGER.debug("Enter session request completed. Has error: {}", error != null);
                     this.pendingJoinAttempt = null;
                     if (error != null) {
                         Throwable cause = rootCause(error);
@@ -527,6 +532,7 @@ public final class SharedWorldSessionCoordinator {
      * The backend enter-session response.
      */
     private void handleEnterSession(Screen parent, String ownerUuid, String worldName, String previousJoinTarget, EnterSessionResponseDto result, boolean hostChangeFlow, boolean returnToSharedWorldMenu, RecoveryFingerprint resumedRecoveryFingerprint, SharedWorldHostingManager.StartupMode startupMode) {
+        LOGGER.info("Handling enter session response: action={}", result.action());
         if ("connect".equals(result.action())) {
             String target = result.runtime() != null ? result.runtime().joinTarget() : null;
             if (target != null && !target.isBlank()) {
@@ -599,6 +605,7 @@ public final class SharedWorldSessionCoordinator {
         state.requestInFlight = true;
         state.lastPollAt = now;
         final long attemptId = state.attemptId;
+        LOGGER.debug("Polling waiting state for world: {} (waiterSessionId={})", state.worldId, state.waiterSessionId);
         this.asyncBridge.supply(() -> this.backend.observeWaiting(state.worldId, state.waiterSessionId), (observation, error) -> {
             if (this.waitingState != state || state.attemptId != attemptId) {
                 return;
@@ -633,6 +640,7 @@ public final class SharedWorldSessionCoordinator {
     }
 
     private void applyPollDecision(WaitingFlowState state, SharedWorldWaitingFlowLogic.PollDecision decision) {
+        LOGGER.debug("Applying poll decision: {}", decision.outcome());
         switch (decision.outcome()) {
             case CONNECT -> {
                 this.waitingState = null;

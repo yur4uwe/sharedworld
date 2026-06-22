@@ -5,6 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import link.sharedworld.CanonicalPlayerIdentity;
 import link.sharedworld.RuntimePlayerIdentity;
 import link.sharedworld.SharedWorldDevSessionBridge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import link.sharedworld.api.SharedWorldModels.AuthChallengeDto;
 import link.sharedworld.api.SharedWorldModels.CreateWorldResultDto;
 import link.sharedworld.api.SharedWorldModels.DevSessionTokenDto;
@@ -55,6 +57,7 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public final class SharedWorldApiClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger("sharedworld-api");
     private final String baseUrl;
     private final HttpClient httpClient;
     private final Gson gson;
@@ -690,6 +693,7 @@ public final class SharedWorldApiClient {
     }
 
     private <T> T request(String method, String path, Object body, Class<T> responseType, boolean authenticated) throws IOException, InterruptedException {
+        LOGGER.debug("API Request: {} {}", method, path);
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(20))
@@ -707,6 +711,7 @@ public final class SharedWorldApiClient {
         }
 
         HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        LOGGER.debug("API Response: {} {} -> {}", method, path, response.statusCode());
         if (response.statusCode() >= 400) {
             ErrorDto error = tryParseError(response.body(), response.statusCode());
             throw new SharedWorldApiException(error.error(), error.message(), error.status());
