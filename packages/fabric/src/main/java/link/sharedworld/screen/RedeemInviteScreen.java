@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.SharedWorldText;
 import link.sharedworld.api.SharedWorldApiClient;
@@ -12,7 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class RedeemInviteScreen extends Screen {
+public final class RedeemInviteScreen extends VersionedScreen {
     private final SharedWorldScreen parent;
     private EditBox codeBox;
     private String statusMessage = "";
@@ -44,6 +46,7 @@ public final class RedeemInviteScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 32, 0xFFFFFFFF);
         guiGraphics.drawString(
                 this.font,
@@ -53,7 +56,6 @@ public final class RedeemInviteScreen extends Screen {
                 0xFFA0A0A0
         );
         guiGraphics.drawString(this.font, this.statusMessage, this.width / 2 - 100, 158, 0xFFA0A0A0);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     private void submit() {

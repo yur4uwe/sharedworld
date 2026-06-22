@@ -26,6 +26,16 @@ public class MinecraftDisconnectMixin {
         this.sharedworld$handleDisconnect();
     }
 
+    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"), require = 0)
+    private void sharedworld$markUserInitiatedClearLevel(net.minecraft.client.gui.screens.Screen screen, CallbackInfo callbackInfo) {
+        this.sharedworld$handleDisconnect();
+    }
+
+    @Inject(method = "clearLevel()V", at = @At("HEAD"), require = 0)
+    private void sharedworld$markUserInitiatedClearLevelNoArgs(CallbackInfo callbackInfo) {
+        this.sharedworld$handleDisconnect();
+    }
+
     private void sharedworld$handleDisconnect() {
         Minecraft minecraft = Minecraft.getInstance();
         SharedWorldPlaySessionTracker.ActiveWorldSession session = SharedWorldClient.playSessionTracker().currentSession();

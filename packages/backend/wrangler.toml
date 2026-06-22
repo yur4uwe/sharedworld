@@ -16,7 +16,7 @@ ALLOW_DEV_AUTH = "false"
 ALLOW_DEV_INSECURE_E4MC = "false"
 ALLOW_DEV_GOOGLE_OAUTH = "false"
 
-ACTIVE_STORAGE_PROVIDER = "google-drive"
+ACTIVE_STORAGE_PROVIDER = "local-disk"
 GOOGLE_OAUTH_SCOPES = "openid email profile https://www.googleapis.com/auth/drive.appdata"
 PUBLIC_BASE_URL = "https://sharedworld.farigola777.workers.dev"
 GOOGLE_OAUTH_REDIRECT_URI = "https://sharedworld.farigola777.workers.dev/storage/google/callback"

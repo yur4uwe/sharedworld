@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.SharedWorldSessionCoordinator;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,7 +12,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
-public final class DiscardPendingFinalizationScreen extends Screen {
+public final class DiscardPendingFinalizationScreen extends VersionedScreen {
     private final HandoffWaitingScreen parent;
     private final String worldId;
     private final String worldName;

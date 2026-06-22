@@ -3,6 +3,7 @@
   "package": "link.sharedworld.mixin.versioned",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "EntityStorageAccessor",
     "EntityStorageSimpleRegionStorageAccessor",
     "MinecraftServerHostPermissionMixin"
   ],

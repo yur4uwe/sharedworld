@@ -2,7 +2,7 @@
   "required": true,
   "package": "link.sharedworld.mixin",
   "plugin": "link.sharedworld.mixin.SharedWorldMixinConfigPlugin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "${javaCompatibility}",
   "client": [
     "ChatComponentMixin",
     "DimensionDataStorageAccessor",
@@ -10,7 +10,6 @@
     "E4mcQuiclimeSessionMixin",
     "E4mcSingleplayerOwnerCompatIntermediaryMixin",
     "E4mcSingleplayerOwnerCompatNamedMixin",
-    "EntityStorageAccessor",
     "IntegratedServerForcedGameTypeMixin",
     "MinecraftDisconnectMixin",
     "MultiplayerScreenMixin",

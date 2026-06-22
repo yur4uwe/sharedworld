@@ -37,7 +37,8 @@ export class LocalDiskProvider implements StorageProvider {
     if (body instanceof ReadableStream) {
       const { pipeline } = await import("node:stream/promises");
       const { createWriteStream } = await import("node:fs");
-      await pipeline(body as any, createWriteStream(filePath));
+      const { Readable } = await import("node:stream");
+      await pipeline(Readable.fromWeb(body as any), createWriteStream(filePath));
     } else {
       await writeFile(filePath, body as any);
     }

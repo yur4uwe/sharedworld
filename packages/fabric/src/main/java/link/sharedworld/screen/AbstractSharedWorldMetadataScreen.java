@@ -100,11 +100,11 @@ abstract class AbstractSharedWorldMetadataScreen extends VersionedScreen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.layoutForm();
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 0xFFFFFFFF);
         this.renderForm(guiGraphics);
         this.renderScrollbar(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override

@@ -26,6 +26,14 @@ public final class SharedWorldMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if ("link.sharedworld.mixin.DimensionDataStorageAccessor".equals(mixinClassName)) {
+            String mcVersion = net.fabricmc.loader.api.FabricLoader.getInstance()
+                    .getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString();
+            if (mcVersion.startsWith("1.20.")) {
+                return false;
+            }
+        }
+
         if (SERVERBOUND_KEY_PACKET_COMPAT_MIXIN.equals(mixinClassName)) {
             boolean shouldApply = SharedWorldE4mcCompatibility.shouldApplyServerboundKeyPacketCompatMixinForDetectedVersion();
             SharedWorldE4mcCompatibility.logServerboundKeyPacketCompatDecision(shouldApply);

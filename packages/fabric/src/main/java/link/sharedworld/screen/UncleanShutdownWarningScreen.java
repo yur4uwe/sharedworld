@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.CanonicalPlayerIdentity;
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.SharedWorldText;
@@ -17,7 +19,7 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-public final class UncleanShutdownWarningScreen extends Screen {
+public final class UncleanShutdownWarningScreen extends VersionedScreen {
     private final Screen parent;
     private final String worldId;
     private final String worldName;

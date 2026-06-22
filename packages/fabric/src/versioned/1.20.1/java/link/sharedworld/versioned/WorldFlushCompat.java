@@ -36,7 +36,7 @@ public final class WorldFlushCompat {
 
     public static Runnable getEntityDeserializerQueue(net.minecraft.world.level.entity.EntityPersistentStorage<?> permanentStorage) {
         if (permanentStorage instanceof net.minecraft.world.level.chunk.storage.EntityStorage entityStorage) {
-            Object queue = ((link.sharedworld.mixin.EntityStorageAccessor) entityStorage).sharedworld$getEntityDeserializerQueue();
+            Object queue = ((link.sharedworld.mixin.versioned.EntityStorageAccessor) entityStorage).sharedworld$getEntityDeserializerQueue();
             if (queue instanceof net.minecraft.util.thread.ProcessorMailbox<?> mailbox) {
                 return () -> mailbox.runAll();
             }
@@ -49,5 +49,9 @@ public final class WorldFlushCompat {
             return ((link.sharedworld.mixin.versioned.EntityStorageIOWorkerAccessor) entityStorage).sharedworld$getWorker().synchronize(false);
         }
         return java.util.concurrent.CompletableFuture.completedFuture(null);
+    }
+
+    public static java.util.concurrent.CompletableFuture<?> getPendingWriteFuture(net.minecraft.world.level.storage.DimensionDataStorage dataStorage) {
+        return null;
     }
 }

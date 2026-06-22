@@ -42,6 +42,50 @@ public final class LayoutCompat {
         }
 
         @Override
+        public int getWidth() {
+            if (this.layoutOrientation == LinearLayout.Orientation.HORIZONTAL) {
+                int[] totalWidth = {0};
+                int[] count = {0};
+                this.visitChildren(element -> {
+                    totalWidth[0] += element.getWidth();
+                    count[0]++;
+                });
+                if (count[0] > 1) {
+                    totalWidth[0] += (count[0] - 1) * spacing;
+                }
+                return totalWidth[0];
+            } else {
+                int[] maxWidth = {0};
+                this.visitChildren(element -> {
+                    maxWidth[0] = Math.max(maxWidth[0], element.getWidth());
+                });
+                return maxWidth[0];
+            }
+        }
+
+        @Override
+        public int getHeight() {
+            if (this.layoutOrientation == LinearLayout.Orientation.VERTICAL) {
+                int[] totalHeight = {0};
+                int[] count = {0};
+                this.visitChildren(element -> {
+                    totalHeight[0] += element.getHeight();
+                    count[0]++;
+                });
+                if (count[0] > 1) {
+                    totalHeight[0] += (count[0] - 1) * spacing;
+                }
+                return totalHeight[0];
+            } else {
+                int[] maxHeight = {0};
+                this.visitChildren(element -> {
+                    maxHeight[0] = Math.max(maxHeight[0], element.getHeight());
+                });
+                return maxHeight[0];
+            }
+        }
+
+        @Override
         public <T extends net.minecraft.client.gui.layouts.LayoutElement> T addChild(T child, LayoutSettings settings) {
             LayoutSettings spacingSettings = settings.copy();
             if (first) {

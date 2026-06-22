@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -8,7 +10,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
-public final class SharedWorldErrorScreen extends Screen {
+public final class SharedWorldErrorScreen extends VersionedScreen {
     private final Screen parent;
     private final Component body;
     private final Component buttonLabel;

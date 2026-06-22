@@ -303,12 +303,17 @@ processResources {
     inputs.property "minecraftRange", mcBucket.minecraftRange
     inputs.property "javaVersion", mcBucket.javaVersion
     inputs.property "loaderVersion", mcBucket.loaderVersion
+    inputs.property "javaCompatibility", "JAVA_" + mcBucket.javaVersion
 
     filesMatching("fabric.mod.json") {
         expand "version": inputs.properties.version,
                "minecraftRange": inputs.properties.minecraftRange,
                "javaVersion": inputs.properties.javaVersion,
                "loaderVersion": inputs.properties.loaderVersion
+    }
+
+    filesMatching("sharedworld.mixins.json") {
+        expand "javaCompatibility": inputs.properties.javaCompatibility
     }
 }
 

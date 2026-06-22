@@ -20,7 +20,7 @@ public abstract class VersionedScreen extends Screen {
     }
 
     public void renderBackground(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderMenuBackground(guiGraphics);
     }
 
     public void renderMenuBackground(net.minecraft.client.gui.GuiGraphics guiGraphics) {

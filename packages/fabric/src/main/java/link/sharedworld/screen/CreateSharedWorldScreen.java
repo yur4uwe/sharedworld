@@ -57,7 +57,7 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
     private final SharedWorldScreen parent;
     private final CreateDraft restoredDraft;
     private final RestoreState restoreState;
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, FOOTER_HEIGHT);
+    private HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, FOOTER_HEIGHT);
     private final List<LocalSaveCatalog.LocalSaveOption> localSaves = LocalSaveCatalog.discover();
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
@@ -115,6 +115,7 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
     @Override
     protected void init() {
         this.clearWidgets();
+        this.layout = new HeaderAndFooterLayout(this, 33, FOOTER_HEIGHT);
         this.previewTexture = FaviconTexture.forWorld(this.minecraft.getTextureManager(), "sharedworld/create-preview");
 
         LinearLayout footer = this.layout.addToFooter(link.sharedworld.versioned.LayoutCompat.horizontal(8));

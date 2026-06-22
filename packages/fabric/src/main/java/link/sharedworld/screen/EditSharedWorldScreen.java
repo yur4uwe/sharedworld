@@ -49,7 +49,7 @@ public final class EditSharedWorldScreen extends VersionedScreen {
     private final WorldSummaryDto world;
     private final ManagedWorldStore worldStore = new ManagedWorldStore();
     private final EditSharedWorldDataController dataController;
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 0, FOOTER_HEIGHT);
+    private HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 0, FOOTER_HEIGHT);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
     private final DetailsTab detailsTab = new DetailsTab();
@@ -103,6 +103,7 @@ public final class EditSharedWorldScreen extends VersionedScreen {
     @Override
     protected void init() {
         this.clearWidgets();
+        this.layout = new HeaderAndFooterLayout(this, 0, FOOTER_HEIGHT);
         this.previewTexture = FaviconTexture.forWorld(this.minecraft.getTextureManager(), "sharedworld/edit-preview/" + this.world.id());
 
         LinearLayout footer = this.layout.addToFooter(link.sharedworld.versioned.LayoutCompat.horizontal(8));

@@ -1,7 +1,6 @@
 package link.sharedworld.host;
 
 import link.sharedworld.mixin.DimensionDataStorageAccessor;
-import link.sharedworld.mixin.EntityStorageAccessor;
 import link.sharedworld.mixin.PersistentEntitySectionManagerAccessor;
 import link.sharedworld.mixin.ServerLevelEntityManagerAccessor;
 import link.sharedworld.sync.ManagedWorldStore;
@@ -270,7 +269,7 @@ final class WorldSnapshotCaptureCoordinator {
                     }
 
                     DimensionDataStorage dataStorage = level.getDataStorage();
-                    CompletableFuture<?> pendingWriteFuture = ((DimensionDataStorageAccessor) dataStorage).sharedworld$getPendingWriteFuture();
+                    CompletableFuture<?> pendingWriteFuture = link.sharedworld.versioned.WorldFlushCompat.getPendingWriteFuture(dataStorage);
                     if (pendingWriteFuture != null) {
                         drainFutures.add(pendingWriteFuture);
                     }

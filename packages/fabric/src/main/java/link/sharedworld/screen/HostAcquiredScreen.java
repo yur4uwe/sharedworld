@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.SharedWorldText;
 import link.sharedworld.api.SharedWorldModels.HostAssignmentDto;
@@ -13,7 +15,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public final class HostAcquiredScreen extends Screen {
+public final class HostAcquiredScreen extends VersionedScreen {
     private final Screen parent;
     private final WorldSummaryDto world;
     private final SnapshotManifestDto latestManifest;
@@ -85,6 +87,7 @@ public final class HostAcquiredScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         SharedWorldHostingManager.StartupView view = SharedWorldClient.hostingManager().startupView();
         SharedWorldProgressState progressState = view.progressState() != null
                 ? view.progressState()
@@ -95,6 +98,5 @@ public final class HostAcquiredScreen extends Screen {
                         null
                 );
         SharedWorldProgressRenderer.renderCentered(guiGraphics, this.font, this.width, this.height, progressState, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 }

@@ -32,7 +32,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "repositionElements", at = @At("TAIL"))
+    @Inject(method = "repositionElements", at = @At("TAIL"), require = 0)
     private void sharedworld$repositionButton(CallbackInfo callbackInfo) {
         if (this.sharedworld$button != null) {
             this.sharedworld$button.setPosition(this.width - 106, 8);

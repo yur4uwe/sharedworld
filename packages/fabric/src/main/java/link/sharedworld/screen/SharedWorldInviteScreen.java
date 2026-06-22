@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.SharedWorldText;
 import link.sharedworld.api.SharedWorldModels.WorldSummaryDto;
@@ -11,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class SharedWorldInviteScreen extends Screen {
+public final class SharedWorldInviteScreen extends VersionedScreen {
     private final SharedWorldScreen parent;
     private final WorldSummaryDto world;
     private boolean started;
@@ -49,6 +51,7 @@ public final class SharedWorldInviteScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 32, 0xFFFFFFFF);
         if (this.inviteCode == null) {
             guiGraphics.drawCenteredString(
@@ -79,7 +82,6 @@ public final class SharedWorldInviteScreen extends Screen {
                 );
             }
         }
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     private void createInvite() {

@@ -1,5 +1,7 @@
 package link.sharedworld.screen;
 
+import link.sharedworld.versioned.VersionedScreen;
+
 import link.sharedworld.SharedWorldText;
 import link.sharedworld.api.SharedWorldApiClient;
 import link.sharedworld.api.SharedWorldModels.WorldSummaryDto;
@@ -8,7 +10,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public final class DeleteSharedWorldScreen extends Screen {
+public final class DeleteSharedWorldScreen extends VersionedScreen {
     private final SharedWorldScreen parent;
     private final WorldSummaryDto world;
 
@@ -32,6 +34,7 @@ public final class DeleteSharedWorldScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawCenteredString(
                 this.font,
                 Component.translatable(isOwner()
@@ -50,7 +53,6 @@ public final class DeleteSharedWorldScreen extends Screen {
                 108,
                 0xFFB0B0B0
         );
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     private void deleteWorld() {

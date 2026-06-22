@@ -47,7 +47,7 @@ public abstract class VersionedObjectSelectionList<E extends ObjectSelectionList
 
     @Override
     public void visitWidgets(java.util.function.Consumer<net.minecraft.client.gui.components.AbstractWidget> consumer) {
-        // A selection list is not an AbstractWidget, so it has no child widgets to visit.
+        consumer.accept(new WidgetSelectionListWrapper(this));
     }
 
     public void updateSize(int width, net.minecraft.client.gui.layouts.HeaderAndFooterLayout layout) {
