@@ -150,7 +150,7 @@ public final class SharedWorldClient implements ClientModInitializer {
 
     public static void openMainScreen(Screen parent) {
         SharedWorldViewState.rememberSharedWorld();
-        parent.clearFocus();
+        link.sharedworld.versioned.ClientCompat.clearScreenFocus(parent);
         Minecraft.getInstance().setScreen(new SharedWorldScreen(parent));
     }
 

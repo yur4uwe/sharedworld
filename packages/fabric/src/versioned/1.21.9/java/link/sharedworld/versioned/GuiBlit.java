@@ -35,4 +35,12 @@ public final class GuiBlit {
     private static ResourceLocation identifier(String id) {
         return IDENTIFIERS.computeIfAbsent(id, ResourceLocation::parse);
     }
+
+    public static void setTooltip(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, net.minecraft.network.chat.Component tooltip, int mouseX, int mouseY) {
+        guiGraphics.setTooltipForNextFrame(tooltip, mouseX, mouseY);
+    }
+
+    public static void setTooltip(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, java.util.List<net.minecraft.util.FormattedCharSequence> tooltipLines, int mouseX, int mouseY) {
+        guiGraphics.setTooltipForNextFrame(tooltipLines, mouseX, mouseY);
+    }
 }

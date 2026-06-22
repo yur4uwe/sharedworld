@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class GuiBlit {
     private static final ResourceLocation SERVER_SELECTION = new ResourceLocation("minecraft", "textures/gui/server_selection.png");
     private static final ResourceLocation ICONS = new ResourceLocation("minecraft", "textures/gui/icons.png");
+    private static final java.util.Map<String, ResourceLocation> CACHED_SPRITES = new java.util.concurrent.ConcurrentHashMap<>();
 
     private GuiBlit() {
     }
@@ -31,8 +32,10 @@ public final class GuiBlit {
                 default: break;
             }
         } else if (spriteId.startsWith("sharedworld:")) {
-            String path = spriteId.substring("sharedworld:".length());
-            ResourceLocation loc = new ResourceLocation("sharedworld", "textures/gui/" + path + ".png");
+            ResourceLocation loc = CACHED_SPRITES.computeIfAbsent(spriteId, id -> {
+                String path = id.substring("sharedworld:".length());
+                return new ResourceLocation("sharedworld", "textures/gui/" + path + ".png");
+            });
             guiGraphics.blit(loc, x, y, 0, 0, width, height, width, height);
         } else if (spriteId.equals("minecraft:widget/scroller_background") || spriteId.equals("minecraft:widget/scroller")) {
             guiGraphics.fill(x, y, x + width, y + height, spriteId.contains("background") ? 0xFF000000 : 0xFF808080);
@@ -44,6 +47,14 @@ public final class GuiBlit {
     }
 
     public static void footerSeparator(GuiGraphics guiGraphics, int y, int width) {
-        guiGraphics.blit(Screen.FOOTER_SEPARATOR, 0, y, 0.0F, 0.0F, width, 2, 32, 2);
+        guiGraphics.fill(0, y, width, y + 2, 0xFF484848);
+    }
+
+    public static void setTooltip(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, net.minecraft.network.chat.Component tooltip, int mouseX, int mouseY) {
+        guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
+    }
+
+    public static void setTooltip(GuiGraphics guiGraphics, net.minecraft.client.gui.Font font, java.util.List<net.minecraft.util.FormattedCharSequence> tooltipLines, int mouseX, int mouseY) {
+        guiGraphics.renderTooltip(font, tooltipLines, mouseX, mouseY);
     }
 }

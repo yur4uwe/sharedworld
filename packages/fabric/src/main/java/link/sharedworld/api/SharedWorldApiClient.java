@@ -609,7 +609,13 @@ public final class SharedWorldApiClient {
             UUID profileUuid = UUID.fromString(
                     CanonicalPlayerIdentity.normalizeUuidWithHyphens(identity.playerUuid(), "current backend player UUID")
             );
-            link.sharedworld.versioned.ClientCompat.sessionService(Minecraft.getInstance()).joinServer(profileUuid, identity.accessToken(), serverId);
+            link.sharedworld.versioned.ClientCompat.joinServer(
+                    link.sharedworld.versioned.ClientCompat.sessionService(Minecraft.getInstance()),
+                    profileUuid,
+                    identity.playerName(),
+                    identity.accessToken(),
+                    serverId
+            );
         } catch (com.mojang.authlib.exceptions.AuthenticationException exception) {
             throw new IOException("Failed to prove Minecraft session to SharedWorld.", exception);
         }

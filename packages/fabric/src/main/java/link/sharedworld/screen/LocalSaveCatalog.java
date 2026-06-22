@@ -28,7 +28,7 @@ final class LocalSaveCatalog {
                 saves.add(new LocalSaveOption(
                         summary.getLevelId(),
                         displayName,
-                        levelSource.getLevelPath(summary.getLevelId()),
+                        link.sharedworld.versioned.ClientCompat.getLevelPath(levelSource, summary.getLevelId()),
                         summary.getLastPlayed(),
                         summary.getIcon(),
                         summary.getInfo()

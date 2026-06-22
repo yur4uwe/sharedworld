@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ChunkStorageWorkerAccessor",
+    "EntityStorageIOWorkerAccessor",
     "MinecraftServerHostPermissionMixin"
   ],
   "injectors": {

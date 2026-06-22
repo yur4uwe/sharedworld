@@ -211,7 +211,7 @@ public final class SharedWorldIntegrationFixtures {
         }
 
         public SharedWorldModels.EnterSessionResponseDto latestHostStart() {
-            return this.hostStarts.isEmpty() ? null : this.hostStarts.getLast();
+            return this.hostStarts.isEmpty() ? null : this.hostStarts.get(this.hostStarts.size() - 1);
         }
 
         public void pollOnce() {
@@ -321,8 +321,8 @@ public final class SharedWorldIntegrationFixtures {
         }
 
         public String stableMarker() throws IOException {
-            CompoundTag level = NbtIo.readCompressed(this.resources.levelPath(), NbtAccounter.unlimitedHeap());
-            return level.getCompoundOrEmpty("Data").getString("SharedWorldStableMarker").orElse("");
+            CompoundTag level = link.sharedworld.versioned.NbtCompat.readCompressed(this.resources.levelPath(), link.sharedworld.versioned.NbtCompat.unlimitedHeap());
+            return link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(level, "Data").getString("SharedWorldStableMarker");
         }
 
         @Override
@@ -379,7 +379,7 @@ public final class SharedWorldIntegrationFixtures {
 
             CompoundTag level = new CompoundTag();
             level.put("Data", data);
-            NbtIo.writeCompressed(level, workingCopy.resolve("level.dat"));
+            link.sharedworld.versioned.NbtCompat.writeCompressed(level, workingCopy.resolve("level.dat"));
             Files.writeString(workingCopy.resolve("data").resolve("notes.txt"), "original-release-notes");
         }
 

@@ -77,13 +77,13 @@ final class BackendModHandoffIntegrationTest {
                     SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated()
             );
 
-            CompoundTag level = NbtIo.readCompressed(workingCopy.resolve("level.dat"), NbtAccounter.unlimitedHeap());
-            CompoundTag data = level.getCompoundOrEmpty("Data");
+            CompoundTag level = link.sharedworld.versioned.NbtCompat.readCompressed(workingCopy.resolve("level.dat"), link.sharedworld.versioned.NbtCompat.unlimitedHeap());
+            CompoundTag data = link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(level, "Data");
 
-            assertEquals("Integration Handoff World", data.getString("LevelName").orElse(""));
-            assertEquals(424242L, data.getLong("RandomSeed").orElse(0L));
-            assertEquals("stone-arch", data.getString("SharedWorldStableMarker").orElse(""));
-            assertEquals("guest-b", data.getCompoundOrEmpty("Player").getString("SharedWorldPlayerMarker").orElse(""));
+            assertEquals("Integration Handoff World", data.getString("LevelName"));
+            assertEquals(424242L, data.getLong("RandomSeed"));
+            assertEquals("stone-arch", data.getString("SharedWorldStableMarker"));
+            assertEquals("guest-b", link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(data, "Player").getString("SharedWorldPlayerMarker"));
             assertFalse(Files.exists(workingCopy.resolve("playerdata").resolve(SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated() + ".dat")));
             assertTrue(Files.exists(workingCopy.resolve("playerdata").resolve(SharedWorldIntegrationBackend.HOST.playerUuidHyphenated() + ".dat")));
             assertFalse(Files.exists(workingCopy.resolve("playerdata").resolve(offlinePlayerUuid(SharedWorldIntegrationBackend.HOST.playerName()) + ".dat")));
@@ -91,7 +91,7 @@ final class BackendModHandoffIntegrationTest {
 
             data.put("Player", updatedGuestPlayer("guest-b-updated"));
             level.put("Data", data);
-            NbtIo.writeCompressed(level, workingCopy.resolve("level.dat"));
+            link.sharedworld.versioned.NbtCompat.writeCompressed(level, workingCopy.resolve("level.dat"));
 
             guestSync.uploadSnapshot(
                     created.world().id(),
@@ -109,13 +109,13 @@ final class BackendModHandoffIntegrationTest {
                     created.world().id(),
                     SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated()
             );
-            CompoundTag canonicalLevel = NbtIo.readCompressed(canonicalCopy.resolve("level.dat"), NbtAccounter.unlimitedHeap());
-            assertFalse(canonicalLevel.getCompoundOrEmpty("Data").contains("Player"));
-            CompoundTag canonicalGuestPlayer = NbtIo.readCompressed(
+            CompoundTag canonicalLevel = link.sharedworld.versioned.NbtCompat.readCompressed(canonicalCopy.resolve("level.dat"), link.sharedworld.versioned.NbtCompat.unlimitedHeap());
+            assertFalse(link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(canonicalLevel, "Data").contains("Player"));
+            CompoundTag canonicalGuestPlayer = link.sharedworld.versioned.NbtCompat.readCompressed(
                     canonicalCopy.resolve("playerdata").resolve(SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated() + ".dat"),
-                    NbtAccounter.unlimitedHeap()
+                    link.sharedworld.versioned.NbtCompat.unlimitedHeap()
             );
-            assertEquals("guest-b-updated", canonicalGuestPlayer.getString("SharedWorldPlayerMarker").orElse(""));
+            assertEquals("guest-b-updated", canonicalGuestPlayer.getString("SharedWorldPlayerMarker"));
             assertFalse(Files.exists(canonicalCopy.resolve("playerdata").resolve(offlinePlayerUuid(SharedWorldIntegrationBackend.HOST.playerName()) + ".dat")));
             assertFalse(Files.exists(canonicalCopy.resolve("playerdata").resolve(offlinePlayerUuid(SharedWorldIntegrationBackend.GUEST.playerName()) + ".dat")));
         } finally {
@@ -195,8 +195,8 @@ final class BackendModHandoffIntegrationTest {
 
         CompoundTag level = new CompoundTag();
         level.put("Data", data);
-        NbtIo.writeCompressed(level, source.resolve("level.dat"));
-        NbtIo.writeCompressed(guestPlayer, source.resolve("playerdata").resolve(SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated() + ".dat"));
+        link.sharedworld.versioned.NbtCompat.writeCompressed(level, source.resolve("level.dat"));
+        link.sharedworld.versioned.NbtCompat.writeCompressed(guestPlayer, source.resolve("playerdata").resolve(SharedWorldIntegrationBackend.GUEST.playerUuidHyphenated() + ".dat"));
     }
 
     private static CompoundTag updatedGuestPlayer(String marker) {

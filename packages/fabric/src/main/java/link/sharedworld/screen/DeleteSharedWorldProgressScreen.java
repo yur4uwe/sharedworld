@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class DeleteSharedWorldProgressScreen extends Screen {
+public final class DeleteSharedWorldProgressScreen extends link.sharedworld.versioned.VersionedScreen {
     private final SharedWorldScreen parent;
     private final WorldSummaryDto world;
     private final boolean ownerDelete;
@@ -81,7 +81,7 @@ public final class DeleteSharedWorldProgressScreen extends Screen {
                         this.parent.onChildOperationFinished(this.ownerDelete
                                 ? SharedWorldText.string("screen.sharedworld.operation_deleted_world", displayName(this.world))
                                 : SharedWorldText.string("screen.sharedworld.operation_left_world", displayName(this.world)));
-                        this.parent.clearFocus();
+                        link.sharedworld.versioned.ClientCompat.clearScreenFocus(this.parent);
                         this.minecraft.setScreen(this.parent);
                     }
                 }));

@@ -53,8 +53,9 @@ public final class E4mcDomainTracker {
     private static String findCopyToClipboardValue(Component component) {
         Style style = component.getStyle();
         ClickEvent clickEvent = style.getClickEvent();
-        if (clickEvent instanceof ClickEvent.CopyToClipboard copyToClipboard) {
-            return copyToClipboard.value();
+        String val = link.sharedworld.versioned.ClientCompat.getCopyToClipboardValue(clickEvent);
+        if (val != null) {
+            return val;
         }
 
         for (Component sibling : component.getSiblings()) {

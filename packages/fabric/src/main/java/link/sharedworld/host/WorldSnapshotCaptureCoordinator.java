@@ -8,7 +8,6 @@ import link.sharedworld.sync.ManagedWorldStore;
 import link.sharedworld.versioned.WorldFlushCompat;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.thread.ConsecutiveExecutor;
 import net.minecraft.world.level.chunk.storage.EntityStorage;
 import net.minecraft.world.level.entity.EntityPersistentStorage;
 import net.minecraft.world.level.entity.PersistentEntitySectionManager;
@@ -171,14 +170,14 @@ final class WorldSnapshotCaptureCoordinator {
         private final String worldId;
         private final boolean previousAutoSave;
         private final List<CompletableFuture<?>> drainFutures;
-        private final List<ConsecutiveExecutor> entityDeserializerQueues;
+        private final List<Runnable> entityDeserializerQueues;
 
         private VanillaAutoSaveWindow(
                 IntegratedServer server,
                 String worldId,
                 boolean previousAutoSave,
                 List<CompletableFuture<?>> drainFutures,
-                List<ConsecutiveExecutor> entityDeserializerQueues
+                List<Runnable> entityDeserializerQueues
         ) {
             this.server = server;
             this.worldId = worldId;
@@ -201,8 +200,8 @@ final class WorldSnapshotCaptureCoordinator {
 
             if (!this.entityDeserializerQueues.isEmpty()) {
                 awaitServerTask(this.server, () -> {
-                    for (ConsecutiveExecutor queue : this.entityDeserializerQueues) {
-                        queue.runAll();
+                    for (Runnable queue : this.entityDeserializerQueues) {
+                        queue.run();
                     }
                     return null;
                 }, SERVER_TASK_TIMEOUT, this.worldId, "entity-deserializer-drain",
@@ -254,15 +253,18 @@ final class WorldSnapshotCaptureCoordinator {
 
             try {
                 List<CompletableFuture<?>> drainFutures = new ArrayList<>();
-                List<ConsecutiveExecutor> entityDeserializerQueues = new ArrayList<>();
+                List<Runnable> entityDeserializerQueues = new ArrayList<>();
                 for (ServerLevel level : this.server.getAllLevels()) {
                     drainFutures.add(WorldFlushCompat.synchronizeChunks(level));
 
                     PersistentEntitySectionManager<?> entityManager = ((ServerLevelEntityManagerAccessor) level).sharedworld$getEntityManager();
                     EntityPersistentStorage<?> permanentStorage = ((PersistentEntitySectionManagerAccessor) entityManager).sharedworld$getPermanentStorage();
                     if (permanentStorage instanceof EntityStorage entityStorage) {
-                        drainFutures.add(((EntityStorageAccessor) entityStorage).sharedworld$getSimpleRegionStorage().synchronize(false));
-                        entityDeserializerQueues.add(((EntityStorageAccessor) entityStorage).sharedworld$getEntityDeserializerQueue());
+                        drainFutures.add(WorldFlushCompat.synchronizeStorage(permanentStorage));
+                        Runnable drainQueue = WorldFlushCompat.getEntityDeserializerQueue(permanentStorage);
+                        if (drainQueue != null) {
+                            entityDeserializerQueues.add(drainQueue);
+                        }
                     } else {
                         permanentStorage.flush(false);
                     }

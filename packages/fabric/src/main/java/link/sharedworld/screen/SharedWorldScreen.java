@@ -48,21 +48,21 @@ public final class SharedWorldScreen extends Screen {
 
     @Override
     protected void init() {
-        this.layout.addTitleHeader(this.title, this.font);
+        link.sharedworld.versioned.LayoutCompat.addTitleHeader(this.layout, this.title, this.font);
         this.serverList = this.layout.addToContents(new SharedWorldServerList(
                 this.minecraft,
                 this.width,
-                this.layout.getContentHeight(),
+                link.sharedworld.versioned.LayoutCompat.getContentHeight(this.layout),
                 this.layout.getHeaderHeight(),
                 36,
                 this
         ));
         this.serverList.setWorlds(this.worlds, SharedWorldClient.cachedSelectedWorldId());
 
-        LinearLayout footer = this.layout.addToFooter(LinearLayout.vertical().spacing(4));
-        footer.defaultCellSetting().alignHorizontallyCenter();
+        LinearLayout footer = this.layout.addToFooter(link.sharedworld.versioned.LayoutCompat.vertical(4));
+        link.sharedworld.versioned.LayoutCompat.alignCenter(footer);
 
-        LinearLayout topRow = footer.addChild(LinearLayout.horizontal().spacing(4));
+        LinearLayout topRow = footer.addChild(link.sharedworld.versioned.LayoutCompat.horizontal(4));
         this.joinButton = topRow.addChild(Button.builder(Component.translatable("screen.sharedworld.join"), button -> {
                     this.releaseWidgetFocus();
                     this.joinSelected();
@@ -88,7 +88,7 @@ public final class SharedWorldScreen extends Screen {
                 .width(74)
                 .build());
 
-        LinearLayout bottomRow = footer.addChild(LinearLayout.horizontal().spacing(4));
+        LinearLayout bottomRow = footer.addChild(link.sharedworld.versioned.LayoutCompat.horizontal(4));
         this.editButton = bottomRow.addChild(Button.builder(Component.translatable("screen.sharedworld.edit"), button -> {
                     this.releaseWidgetFocus();
                     this.openEditWorld();
@@ -303,7 +303,7 @@ public final class SharedWorldScreen extends Screen {
 
     private void openVanillaServers() {
         SharedWorldClient.rememberVanillaView();
-        this.parent.clearFocus();
+        link.sharedworld.versioned.ClientCompat.clearScreenFocus(this.parent);
         this.releaseWidgetFocus();
         this.minecraft.setScreen(this.parent);
     }
@@ -321,7 +321,6 @@ public final class SharedWorldScreen extends Screen {
     }
 
     private void releaseWidgetFocus() {
-        this.clearFocus();
         this.setFocused(null);
         if (this.joinButton != null) {
             this.joinButton.setFocused(false);
@@ -421,4 +420,5 @@ public final class SharedWorldScreen extends Screen {
         String owner = world.ownerUuid().replace("-", "").toLowerCase();
         return owner.equals(currentPlayer);
     }
+
 }

@@ -40,25 +40,25 @@ final class WorldCanonicalizerTest {
 
         CompoundTag level = new CompoundTag();
         level.put("Data", data);
-        NbtIo.writeCompressed(level, source.resolve("level.dat"));
-        NbtIo.writeCompressed(guestPlayer, source.resolve("playerdata").resolve(GUEST_UUID + ".dat"));
+        link.sharedworld.versioned.NbtCompat.writeCompressed(level, source.resolve("level.dat"));
+        link.sharedworld.versioned.NbtCompat.writeCompressed(guestPlayer, source.resolve("playerdata").resolve(GUEST_UUID + ".dat"));
 
         List<PreparedWorldFile> canonicalFiles = WorldCanonicalizer.scanCanonical(source, HOST_UUID);
         Path canonical = this.tempDir.resolve("canonical");
         writePreparedFiles(canonicalFiles, canonical);
 
-        CompoundTag canonicalLevel = NbtIo.readCompressed(canonical.resolve("level.dat"), NbtAccounter.unlimitedHeap());
-        assertFalse(canonicalLevel.getCompoundOrEmpty("Data").contains("Player"));
+        CompoundTag canonicalLevel = link.sharedworld.versioned.NbtCompat.readCompressed(canonical.resolve("level.dat"), link.sharedworld.versioned.NbtCompat.unlimitedHeap());
+        assertFalse(link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(canonicalLevel, "Data").contains("Player"));
 
         WorldCanonicalizer.materializeHostPlayer(canonical, GUEST_UUID);
 
-        CompoundTag materialized = NbtIo.readCompressed(canonical.resolve("level.dat"), NbtAccounter.unlimitedHeap());
-        CompoundTag materializedData = materialized.getCompoundOrEmpty("Data");
+        CompoundTag materialized = link.sharedworld.versioned.NbtCompat.readCompressed(canonical.resolve("level.dat"), link.sharedworld.versioned.NbtCompat.unlimitedHeap());
+        CompoundTag materializedData = link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(materialized, "Data");
 
-        assertEquals("Handoff Regression", materializedData.getString("LevelName").orElse(""));
-        assertEquals(424242L, materializedData.getLong("RandomSeed").orElse(0L));
-        assertEquals("stone-arch", materializedData.getString("SharedWorldStableMarker").orElse(""));
-        assertEquals("guest-b", materializedData.getCompoundOrEmpty("Player").getString("SharedWorldPlayerMarker").orElse(""));
+        assertEquals("Handoff Regression", materializedData.getString("LevelName"));
+        assertEquals(424242L, materializedData.getLong("RandomSeed"));
+        assertEquals("stone-arch", materializedData.getString("SharedWorldStableMarker"));
+        assertEquals("guest-b", link.sharedworld.versioned.NbtCompat.getCompoundOrEmpty(materializedData, "Player").getString("SharedWorldPlayerMarker"));
         assertFalse(Files.exists(canonical.resolve("playerdata").resolve(GUEST_UUID + ".dat")));
         assertTrue(Files.exists(canonical.resolve("playerdata").resolve(HOST_UUID + ".dat")));
     }

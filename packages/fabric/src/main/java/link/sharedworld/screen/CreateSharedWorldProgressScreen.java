@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class CreateSharedWorldProgressScreen extends Screen {
+public final class CreateSharedWorldProgressScreen extends link.sharedworld.versioned.VersionedScreen {
     // The seed lease has a fixed startup deadline; heartbeat well inside it so a slow copy/upload
     // cannot let the lease expire mid-create.
     private static final long LEASE_KEEPALIVE_INTERVAL_MS = 30_000L;

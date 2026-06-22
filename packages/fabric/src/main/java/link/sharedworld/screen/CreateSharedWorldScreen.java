@@ -117,7 +117,7 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         this.clearWidgets();
         this.previewTexture = FaviconTexture.forWorld(this.minecraft.getTextureManager(), "sharedworld/create-preview");
 
-        LinearLayout footer = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
+        LinearLayout footer = this.layout.addToFooter(link.sharedworld.versioned.LayoutCompat.horizontal(8));
         this.backButton = footer.addChild(Button.builder(Component.translatable("screen.sharedworld.cancel"), ignored -> this.onBack())
                 .width(FOOTER_BUTTON_WIDTH)
                 .build());
@@ -320,7 +320,7 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
                     this.font,
                     Component.translatable("screen.sharedworld.validation_world_name_short"),
                     left,
-                    this.nameBox.getBottom() + 6,
+                    this.nameBox.getY() + this.nameBox.getHeight() + 6,
                     0xFFFF5555
             );
         }
@@ -390,10 +390,10 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
         boolean useLocalDisk = this.isLocalDiskBackend();
 
         if (this.tabNavigationBar != null) {
-            this.tabNavigationBar.setTabActiveState(0, true);
-            this.tabNavigationBar.setTabActiveState(1, detailsAllowed);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 0, true);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 1, detailsAllowed);
             // Hide the storage tab entirely when the backend manages storage itself.
-            this.tabNavigationBar.setTabActiveState(2, !useLocalDisk && storageAllowed);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 2, !useLocalDisk && storageAllowed);
         }
 
         this.backButton.setMessage(currentTab == this.worldTab ? Component.translatable("screen.sharedworld.cancel") : Component.translatable("gui.back"));
@@ -988,21 +988,18 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_world");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }
 
         @Override
         public void visitChildren(Consumer<AbstractWidget> consumer) {
-            consumer.accept(CreateSharedWorldScreen.this.saveList);
+            link.sharedworld.versioned.ClientCompat.visitSelectionList(consumer, CreateSharedWorldScreen.this.saveList);
         }
 
         @Override
         public void doLayout(ScreenRectangle area) {
-            CreateSharedWorldScreen.this.saveList.setPosition(area.left() + CONTENT_MARGIN, area.top() + CONTENT_MARGIN);
-            CreateSharedWorldScreen.this.saveList.setWidth(area.width() - CONTENT_MARGIN * 2);
-            CreateSharedWorldScreen.this.saveList.setHeight(area.height() - CONTENT_MARGIN * 2);
+            CreateSharedWorldScreen.this.saveList.updateBounds(area.left() + CONTENT_MARGIN, area.top() + CONTENT_MARGIN, area.width() - CONTENT_MARGIN * 2, area.height() - CONTENT_MARGIN * 2);
         }
     }
 
@@ -1012,7 +1009,6 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_details");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }
@@ -1039,7 +1035,6 @@ public final class CreateSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_storage");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }

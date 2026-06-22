@@ -1278,7 +1278,7 @@ public final class SharedWorldHostingManager {
         public void openExistingWorld(ManagedWorldStore worldStore, WorldSummaryDto world, Path worldDirectory) {
             Minecraft.getInstance().execute(() -> {
                 WorldOpenFlows flows = new WorldOpenFlows(Minecraft.getInstance(), worldStore.levelSource(world.id()));
-                flows.openWorld(ManagedWorldStore.LEVEL_ID, () -> {
+                link.sharedworld.versioned.ClientCompat.openWorld(flows, ManagedWorldStore.LEVEL_ID, () -> {
                 });
             });
         }

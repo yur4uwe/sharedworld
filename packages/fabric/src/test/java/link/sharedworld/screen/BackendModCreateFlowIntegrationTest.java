@@ -37,7 +37,7 @@ final class BackendModCreateFlowIntegrationTest {
             Files.createDirectories(source.resolve("data"));
             CompoundTag levelTag = new CompoundTag();
             levelTag.put("Data", new CompoundTag());
-            NbtIo.writeCompressed(levelTag, source.resolve("level.dat"));
+            link.sharedworld.versioned.NbtCompat.writeCompressed(levelTag, source.resolve("level.dat"));
             Files.writeString(source.resolve("data").resolve("notes.txt"), "hello");
 
             ManagedWorldStore managedWorldStore = new ManagedWorldStore(root.resolve("managed"));
@@ -114,7 +114,7 @@ final class BackendModCreateFlowIntegrationTest {
                     }
             );
 
-            SharedWorldModels.WorldSummaryDto createdWorld = hostClient.listWorlds().getFirst();
+            SharedWorldModels.WorldSummaryDto createdWorld = hostClient.listWorlds().get(0);
             SharedWorldIntegrationBackend.StorageSnapshot storage = SharedWorldIntegrationBackend.storageSnapshot();
 
             assertEquals("screen.sharedworld.operation_created_world", message);

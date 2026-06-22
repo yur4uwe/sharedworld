@@ -108,9 +108,9 @@ abstract class AbstractSharedWorldMetadataScreen extends VersionedScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    protected boolean sharedworldMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (this.maxScroll() <= 0 || !this.isInsideViewport(mouseX, mouseY)) {
-            return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+            return false;
         }
         this.setScrollOffset(this.scrollOffset - verticalAmount * 16.0D);
         return true;
@@ -263,7 +263,7 @@ abstract class AbstractSharedWorldMetadataScreen extends VersionedScreen {
                         this.layoutForm();
                     } else {
                         this.parent.onChildOperationFinished(result);
-                        this.parent.clearFocus();
+                        link.sharedworld.versioned.ClientCompat.clearScreenFocus(this.parent);
                         this.minecraft.setScreen(this.parent);
                     }
                 }));
@@ -372,7 +372,7 @@ abstract class AbstractSharedWorldMetadataScreen extends VersionedScreen {
     }
 
     private void updateWidgetVisibility(AbstractWidget widget, int visibleTop, int visibleBottom) {
-        widget.visible = widget.getBottom() > visibleTop && widget.getY() < visibleBottom;
+        widget.visible = (widget.getY() + widget.getHeight()) > visibleTop && widget.getY() < visibleBottom;
     }
 
     private List<FormattedCharSequence> wrapMessage(String message) {

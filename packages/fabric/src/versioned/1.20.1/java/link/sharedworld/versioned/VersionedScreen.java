@@ -13,6 +13,29 @@ public abstract class VersionedScreen extends Screen {
         super(title);
     }
 
+    @Override
+    public void render(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    public void renderBackground(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
+    }
+
+    public void renderMenuBackground(net.minecraft.client.gui.GuiGraphics guiGraphics) {
+        super.renderBackground(guiGraphics);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.setInitialFocus();
+    }
+
+    protected void setInitialFocus() {
+    }
+
     /** Return true to consume the click before vanilla widget handling runs. */
     protected boolean sharedworldMouseClicked(double mouseX, double mouseY) {
         return false;
@@ -54,6 +77,10 @@ public abstract class VersionedScreen extends Screen {
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    protected boolean sharedworldMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        return false;
+    }
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         TabNavigationBar tabBar = this.sharedworldTabNavigationBar();
@@ -61,5 +88,13 @@ public abstract class VersionedScreen extends Screen {
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if (this.sharedworldMouseScrolled(mouseX, mouseY, 0.0, amount)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, amount);
     }
 }

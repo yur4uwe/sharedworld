@@ -1,12 +1,11 @@
 package link.sharedworld.progress;
 
 import link.sharedworld.util.MonotonicClock;
+import link.sharedworld.versioned.ClientCompat;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.LoadingDotsWidget;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.util.ARGB;
 
 public final class SharedWorldProgressRenderer {
     private static final int TITLE_Y_OFFSET = -36;
@@ -41,11 +40,7 @@ public final class SharedWorldProgressRenderer {
             return;
         }
 
-        LoadingDotsWidget dotsWidget = new LoadingDotsWidget(font, Component.empty());
-        dotsWidget.setX(centerX - (dotsWidget.getWidth() / 2));
-        int indicatorCenterY = indicatorTop + (PROGRESS_BAR_HEIGHT / 2);
-        dotsWidget.setY(indicatorCenterY - (dotsWidget.getHeight() / 2) + DOTS_Y_NUDGE);
-        dotsWidget.render(guiGraphics, 0, 0, partialTick);
+        ClientCompat.renderIndeterminate(guiGraphics, font, centerX, indicatorTop, PROGRESS_BAR_HEIGHT, DOTS_Y_NUDGE, partialTick);
     }
 
     public static void renderCenteredBar(
@@ -95,13 +90,13 @@ public final class SharedWorldProgressRenderer {
         float pingPong = cycle <= 0.5F ? cycle * 2.0F : (1.0F - cycle) * 2.0F;
         float highlightStart = clampedStart + (travel * pingPong);
         float highlightEnd = Math.min(clampedEnd, highlightStart + segmentWidth);
-        drawProgressSegment(guiGraphics, left, top, right, bottom, highlightStart, highlightEnd, ARGB.color(200, 255, 255, 255));
+        drawProgressSegment(guiGraphics, left, top, right, bottom, highlightStart, highlightEnd, packColor(200, 255, 255, 255));
     }
 
     private static void drawProgressBar(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float progress) {
-        guiGraphics.fill(left + 1, top + 1, right - 1, bottom - 1, ARGB.color(80, 255, 255, 255));
+        guiGraphics.fill(left + 1, top + 1, right - 1, bottom - 1, packColor(80, 255, 255, 255));
         int filledWidth = (int) Math.ceil((right - left - 2) * Math.max(0.0F, Math.min(1.0F, progress)));
-        int color = ARGB.color(255, 255, 255, 255);
+        int color = packColor(255, 255, 255, 255);
         guiGraphics.fill(left + 2, top + 2, left + filledWidth, bottom - 2, color);
         guiGraphics.fill(left + 1, top, right - 1, top + 1, color);
         guiGraphics.fill(left + 1, bottom, right - 1, bottom - 1, color);
@@ -128,5 +123,9 @@ public final class SharedWorldProgressRenderer {
             return;
         }
         guiGraphics.fill(segmentLeft, top + 2, segmentRight, bottom - 2, color);
+    }
+
+    private static int packColor(int a, int r, int g, int b) {
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 }

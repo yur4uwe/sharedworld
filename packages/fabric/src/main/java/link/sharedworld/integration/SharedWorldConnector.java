@@ -2,11 +2,10 @@ package link.sharedworld.integration;
 
 import link.sharedworld.SharedWorldClient;
 import link.sharedworld.screen.SharedWorldErrorScreen;
+import link.sharedworld.versioned.ClientCompat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.multiplayer.TransferState;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public final class SharedWorldConnector {
 
     public static void connect(Screen parent, String target, String worldId, String worldName, long runtimeEpoch) {
         Minecraft minecraft = Minecraft.getInstance();
-        connect(parent, target, worldId, worldName, runtimeEpoch, minecraft, ConnectScreen::startConnecting, (currentParent, error) -> minecraft.setScreen(new SharedWorldErrorScreen(
+        connect(parent, target, worldId, worldName, runtimeEpoch, minecraft, ClientCompat::startConnecting, (currentParent, error) -> minecraft.setScreen(new SharedWorldErrorScreen(
                 currentParent,
                 Component.translatable("screen.sharedworld.error_join_title"),
                 Component.translatable("screen.sharedworld.join_connect_failed")
@@ -37,7 +36,7 @@ public final class SharedWorldConnector {
     public static void connect(Screen parent, String target, String worldId, String worldName, long runtimeEpoch, Consumer<Throwable> failureHandler) {
         Objects.requireNonNull(failureHandler, "failureHandler");
         Minecraft minecraft = Minecraft.getInstance();
-        connect(parent, target, worldId, worldName, runtimeEpoch, minecraft, ConnectScreen::startConnecting, (currentParent, error) -> failureHandler.accept(error));
+        connect(parent, target, worldId, worldName, runtimeEpoch, minecraft, ClientCompat::startConnecting, (currentParent, error) -> failureHandler.accept(error));
     }
 
     static void connect(
@@ -51,7 +50,7 @@ public final class SharedWorldConnector {
             ConnectFailureHandler connectFailureHandler
     ) {
         ServerAddress address = ServerAddress.parseString(target);
-        ServerData serverData = new ServerData(worldName, target, ServerData.Type.OTHER);
+        ServerData serverData = ClientCompat.newServerData(worldName, target, false);
         if (worldId != null) {
             SharedWorldClient.playSessionTracker().beginGuestConnect(worldId, worldName, target, runtimeEpoch);
         }
@@ -75,7 +74,7 @@ public final class SharedWorldConnector {
                 ServerAddress address,
                 ServerData serverData,
                 boolean quickPlay,
-                TransferState transferState
+                Object transferState
         );
     }
 

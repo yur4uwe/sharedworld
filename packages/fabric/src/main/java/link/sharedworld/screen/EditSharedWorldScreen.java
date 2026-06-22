@@ -105,7 +105,7 @@ public final class EditSharedWorldScreen extends VersionedScreen {
         this.clearWidgets();
         this.previewTexture = FaviconTexture.forWorld(this.minecraft.getTextureManager(), "sharedworld/edit-preview/" + this.world.id());
 
-        LinearLayout footer = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
+        LinearLayout footer = this.layout.addToFooter(link.sharedworld.versioned.LayoutCompat.horizontal(8));
         this.backButton = footer.addChild(Button.builder(Component.translatable("gui.back"), ignored -> this.onBack())
                 .width(120)
                 .build());
@@ -272,7 +272,7 @@ public final class EditSharedWorldScreen extends VersionedScreen {
                     this.font,
                     Component.translatable("screen.sharedworld.validation_world_name_short"),
                     left,
-                    this.nameBox.getBottom() + 6,
+                    this.nameBox.getY() + this.nameBox.getHeight() + 6,
                     0xFFFF5555
             );
         }
@@ -339,10 +339,10 @@ public final class EditSharedWorldScreen extends VersionedScreen {
         boolean tabsUnlocked = !this.loading;
 
         if (this.tabNavigationBar != null) {
-            this.tabNavigationBar.setTabActiveState(0, true);
-            this.tabNavigationBar.setTabActiveState(1, tabsUnlocked);
-            this.tabNavigationBar.setTabActiveState(2, tabsUnlocked);
-            this.tabNavigationBar.setTabActiveState(3, tabsUnlocked);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 0, true);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 1, tabsUnlocked);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 2, tabsUnlocked);
+            link.sharedworld.versioned.ClientCompat.setTabActiveState(this.tabNavigationBar, 3, tabsUnlocked);
         }
 
         this.backButton.setMessage(Component.translatable("gui.back"));
@@ -410,12 +410,8 @@ public final class EditSharedWorldScreen extends VersionedScreen {
         if (this.contentArea == null) {
             return;
         }
-        this.snapshotList.setPosition(this.contentArea.left() + CONTENT_MARGIN, this.contentArea.top() + 18);
-        this.snapshotList.setWidth(178);
-        this.snapshotList.setHeight(this.contentArea.height() - 36);
-        this.memberList.setPosition(this.contentArea.left() + CONTENT_MARGIN, this.contentArea.top() + 18);
-        this.memberList.setWidth(164);
-        this.memberList.setHeight(this.contentArea.height() - 36);
+        this.snapshotList.updateBounds(this.contentArea.left() + CONTENT_MARGIN, this.contentArea.top() + 18, 178, this.contentArea.height() - 36);
+        this.memberList.updateBounds(this.contentArea.left() + CONTENT_MARGIN, this.contentArea.top() + 18, 164, this.contentArea.height() - 36);
     }
 
     private void onBack() {
@@ -954,7 +950,6 @@ public final class EditSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_details");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }
@@ -981,14 +976,13 @@ public final class EditSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_backups");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }
 
         @Override
         public void visitChildren(Consumer<AbstractWidget> consumer) {
-            consumer.accept(EditSharedWorldScreen.this.snapshotList);
+            link.sharedworld.versioned.ClientCompat.visitSelectionList(consumer, EditSharedWorldScreen.this.snapshotList);
         }
 
         @Override
@@ -1003,14 +997,13 @@ public final class EditSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_members");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }
 
         @Override
         public void visitChildren(Consumer<AbstractWidget> consumer) {
-            consumer.accept(EditSharedWorldScreen.this.memberList);
+            link.sharedworld.versioned.ClientCompat.visitSelectionList(consumer, EditSharedWorldScreen.this.memberList);
         }
 
         @Override
@@ -1025,7 +1018,6 @@ public final class EditSharedWorldScreen extends VersionedScreen {
             return Component.translatable("screen.sharedworld.tab_storage");
         }
 
-        @Override
         public Component getTabExtraNarration() {
             return this.getTabTitle();
         }

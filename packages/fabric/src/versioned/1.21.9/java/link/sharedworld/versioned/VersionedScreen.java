@@ -58,6 +58,10 @@ public abstract class VersionedScreen extends Screen {
         return super.mouseReleased(event);
     }
 
+    protected boolean sharedworldMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        return false;
+    }
+
     @Override
     public boolean keyPressed(KeyEvent event) {
         TabNavigationBar tabBar = this.sharedworldTabNavigationBar();
@@ -65,5 +69,13 @@ public abstract class VersionedScreen extends Screen {
             return true;
         }
         return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (this.sharedworldMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 }
