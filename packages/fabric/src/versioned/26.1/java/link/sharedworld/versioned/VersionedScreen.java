@@ -17,6 +17,13 @@ public abstract class VersionedScreen extends Screen {
         super(title);
     }
 
+    @Override
+    public void render(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+
     /** Return true to consume the click before vanilla widget handling runs. */
     protected boolean sharedworldMouseClicked(double mouseX, double mouseY) {
         return false;

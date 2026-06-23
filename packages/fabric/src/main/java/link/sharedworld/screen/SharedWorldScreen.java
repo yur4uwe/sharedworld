@@ -197,8 +197,15 @@ public final class SharedWorldScreen extends VersionedScreen {
 
     @Override
     public void onClose() {
-        this.parent.onClose();
+        if (this.parent != null) {
+            link.sharedworld.mixin.ScreenAccessor accessor = (link.sharedworld.mixin.ScreenAccessor) this.parent;
+            if (accessor.sharedworld$getMinecraft() == null && this.minecraft != null) {
+                accessor.sharedworld$setMinecraft(this.minecraft);
+            }
+            this.parent.onClose();
+        }
     }
+
 
     @Override
     public void tick() {
